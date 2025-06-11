@@ -1,0 +1,59 @@
+# Instruções para enviar o projeto Orthosais para o GitHub
+
+## Passo 1: Instalar o Git
+1. Baixe o instalador do Git em: https://git-scm.com/download/win
+2. Execute o instalador e siga as instruções padrão
+3. Após a instalação, reinicie o computador
+
+## Passo 2: Configurar o Git
+Abra o Git Bash ou o Prompt de Comando e execute:
+```
+git config --global user.name "Seu Nome"
+git config --global user.email "seu.email@exemplo.com"
+```
+
+## Passo 3: Inicializar o repositório Git no projeto
+1. Abra o Git Bash ou o Prompt de Comando
+2. Navegue até a pasta do projeto:
+```
+cd C:\Users\Pedro\Desktop\Projetos\orthosais
+```
+3. Inicialize o repositório Git:
+```
+git init
+```
+
+## Passo 4: Adicionar os arquivos ao repositório
+```
+git add .
+```
+
+## Passo 5: Fazer o primeiro commit
+```
+git commit -m "Commit inicial"
+```
+
+## Passo 6: Conectar ao repositório remoto no GitHub
+```
+git remote add origin https://github.com/pedronogr/orthosais.git
+```
+
+## Passo 7: Enviar o projeto para o GitHub
+```
+git push -u origin master
+```
+Se o branch principal for "main" em vez de "master", use:
+```
+git push -u origin main
+```
+
+## Observações:
+- Se o GitHub pedir autenticação, use seu nome de usuário e senha do GitHub
+- Se você tiver autenticação de dois fatores ativada, precisará criar um token de acesso pessoal no GitHub e usá-lo como senha
+- Para criar um token de acesso: GitHub > Configurações > Developer settings > Personal access tokens > Generate new token
+
+## Comandos úteis:
+- Para verificar o status do repositório: `git status`
+- Para verificar o repositório remoto: `git remote -v`
+- Para atualizar o repositório local: `git pull origin master` (ou main)
+- Para ver o histórico de commits: `git log`

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 80">
+  <style>
+    .title { font-family: Arial, sans-serif; font-weight: bold; }
+    .primary { fill: #e53e3e; }
+    .secondary { fill: #ed8936; }
+    .tagline { font-family: Arial, sans-serif; font-size: 14px; fill: #4a5568; }
+  </style>
+  
+  <text x="10" y="45" class="title primary" font-size="32">Orthosais</text>
+  <text x="155" y="45" class="title secondary" font-size="32">Farma</text>
+  
+  <text x="10" y="70" class="tagline">Portas abertas para a Proteção a VIDA</text>
+  
+  <path class="primary" d="M280 15 A20 20 0 0 1 280 45 L270 30 Z" />
+  <path class="secondary" d="M260 15 A20 20 0 0 0 260 45 L270 30 Z" />
+</svg> 

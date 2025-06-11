@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #e53e3e; /* Vermelho */
+  --primary-hover: #c53030; /* Vermelho escuro */
+  --secondary: #ed8936; /* Laranja */
+  --secondary-hover: #dd6b20; /* Laranja escuro */
+  --accent: #f6ad55; /* Laranja claro */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-accent: var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --primary: #f56565; /* Vermelho mais claro para dark mode */
+    --primary-hover: #e53e3e; /* Vermelho para dark mode */
+    --secondary: #ed8936; /* Laranja */
+    --secondary-hover: #f6ad55; /* Laranja claro para dark mode */
+    --accent: #fbd38d; /* Laranja muito claro */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}

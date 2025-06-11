@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f7fafc" />
+  
+  <!-- Frasco -->
+  <rect x="60" y="40" width="80" height="120" rx="5" fill="#e53e3e" />
+  <rect x="65" y="45" width="70" height="110" rx="3" fill="#fff" opacity="0.2" />
+  
+  <!-- Tampa -->
+  <rect x="70" y="25" width="60" height="20" rx="5" fill="#2d3748" />
+  <rect x="75" y="30" width="50" height="10" rx="2" fill="#4a5568" />
+  
+  <!-- Rótulo -->
+  <rect x="70" y="70" width="60" height="80" rx="2" fill="#fff" />
+  
+  <!-- Texto do Rótulo -->
+  <text x="100" y="90" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#e53e3e">OrthoVit</text>
+  <text x="100" y="105" font-family="Arial" font-size="8" font-weight="bold" text-anchor="middle" fill="#e53e3e">Complex</text>
+  
+  <text x="100" y="125" font-family="Arial" font-size="6" text-anchor="middle" fill="#4a5568">Suplemento</text>
+  <text x="100" y="135" font-family="Arial" font-size="6" text-anchor="middle" fill="#4a5568">Vitamínico</text>
+  
+  <text x="100" y="145" font-family="Arial" font-size="5" text-anchor="middle" fill="#718096">30 cápsulas</text>
+</svg>
