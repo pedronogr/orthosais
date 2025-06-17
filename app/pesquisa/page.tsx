@@ -10,7 +10,7 @@ export default function PesquisaPage() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-primary text-white py-16">
+      <section className="bg-primary text-white py-16" style={{ color: '#fff', opacity: 1, filter: 'none' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-6">Pesquisa e Inovação</h1>
@@ -223,7 +223,8 @@ export default function PesquisaPage() {
               da área da saúde. Se você tem interesse em colaborar com nossos projetos de pesquisa e 
               inovação, entre em contato conosco.
             </p>
-            <Link href="/contato" className="inline-block bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-md font-medium">
+            <Link href="/contato" className="inline-block bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-md font-medium"
+              style={{ color: '#e53e3e', opacity: 1, filter: 'none' }}>
               ENTRE EM CONTATO
             </Link>
           </div>

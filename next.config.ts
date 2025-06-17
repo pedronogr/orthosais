@@ -1,11 +1,12 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Build tradicional para suportar rotas dinâmicas do admin em ambiente Netlify Functions
   eslint: {
-    // Ignorar erros de ESLint durante a build
     ignoreDuringBuilds: true,
+  },
+  images: {
+    unoptimized: true,
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

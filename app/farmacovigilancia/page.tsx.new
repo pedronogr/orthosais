@@ -1,0 +1,333 @@
+"use client";
+
+import { useState } from 'react';
+import PageLayout from '../PageLayout';
+
+export default function FarmacovigilanciaPage() {
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    telefone: '',
+    profissional: '',
+    produto: '',
+    lote: '',
+    reacaoAdversa: '',
+    descricao: '',
+    privacidade: false
+  });
+  
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [submitted, setSubmitted] = useState(false);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
+    
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    
+    // Limpa o erro quando o campo é preenchido
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+  
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!formData.nome.trim()) errors.nome = "Nome é obrigatório";
+    if (!formData.email.trim()) errors.email = "Email é obrigatório";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) errors.email = "Email inválido";
+    if (!formData.produto.trim()) errors.produto = "Nome do produto é obrigatório";
+    if (!formData.reacaoAdversa.trim()) errors.reacaoAdversa = "Descrição da reação adversa é obrigatória";
+    if (!formData.privacidade) errors.privacidade = "Você precisa concordar com a política de privacidade";
+    
+    return errors;
+  };
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    
+    // Aqui iria a lógica para enviar o formulário
+    console.log("Formulário enviado:", formData);
+    setSubmitted(true);
+    
+    // Reset do formulário
+    setFormData({
+      nome: '',
+      email: '',
+      telefone: '',
+      profissional: '',
+      produto: '',
+      lote: '',
+      reacaoAdversa: '',
+      descricao: '',
+      privacidade: false
+    });
+  };
+  
+  return (
+    <PageLayout 
+      title="Farmacovigilância" 
+      description="Sistema de notificação e monitoramento da segurança dos nossos produtos"
+      headerImageSrc="/images/farmacovigilancia-header.jpg"
+    >
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          {/* Seção de Informações */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-primary mb-4">O que é Farmacovigilância?</h2>
+            <p className="text-gray-700 mb-4">
+              Farmacovigilância é a ciência e as atividades relacionadas à detecção, avaliação, compreensão e prevenção 
+              de efeitos adversos ou quaisquer outros problemas relacionados a medicamentos. Na Orthosais Farma, levamos 
+              este compromisso muito a sério.
+            </p>
+            <p className="text-gray-700 mb-8">
+              Nosso sistema de Farmacovigilância monitora continuamente a segurança de todos os nossos produtos comercializados, 
+              garantindo que qualquer sinal de possível risco seja rapidamente identificado e adequadamente gerenciado.
+            </p>
+            
+            <h3 className="text-xl font-semibold text-gray-800 mb-3">Por que notificar?</h3>
+            <ul className="list-disc pl-6 mb-8 text-gray-700 space-y-2">
+              <li>Sua notificação contribui para o conhecimento sobre a segurança dos produtos</li>
+              <li>Ajuda a identificar novas reações adversas ou interações medicamentosas</li>
+              <li>Permite o monitoramento contínuo da relação benefício-risco dos medicamentos</li>
+              <li>Promove o uso mais seguro e eficaz dos produtos farmacêuticos</li>
+            </ul>
+            
+            <div className="bg-primary/10 p-6 rounded-lg border-l-4 border-primary mb-8">
+              <h3 className="text-lg font-semibold text-primary mb-2">Quando Notificar?</h3>
+              <p className="text-gray-700 mb-3">
+                É importante notificar qualquer suspeita de reação adversa, mesmo que não tenha certeza da relação 
+                causal entre o produto e o evento adverso observado. Em especial:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li>Reações adversas graves ou inesperadas</li>
+                <li>Falta de eficácia do medicamento</li>
+                <li>Suspeitas de desvios de qualidade</li>
+                <li>Erros de medicação</li>
+                <li>Uso off-label que resultou em reação adversa</li>
+              </ul>
+            </div>
+          </div>
+          
+          {submitted ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center mb-12">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Notificação Enviada com Sucesso!</h3>
+              <p className="text-gray-600 mb-4">
+                Agradecemos sua contribuição para a segurança dos nossos produtos. 
+                Nossa equipe de Farmacovigilância analisará sua notificação e entrará em contato se necessário.
+              </p>
+              <button 
+                onClick={() => setSubmitted(false)} 
+                className="bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-hover transition"
+              >
+                Enviar Nova Notificação
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white shadow-lg rounded-lg p-8 mb-12">
+              <h2 className="text-2xl font-bold text-primary mb-6 text-center">Formulário de Notificação</h2>
+              
+              <form onSubmit={handleSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {/* Nome */}
+                  <div>
+                    <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nome Completo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      value={formData.nome}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                        formErrors.nome ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {formErrors.nome && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.nome}</p>
+                    )}
+                  </div>
+                  
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                        formErrors.email ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {formErrors.email && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
+                    )}
+                  </div>
+                  
+                  {/* Telefone */}
+                  <div>
+                    <label htmlFor="telefone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Telefone
+                    </label>
+                    <input
+                      type="tel"
+                      id="telefone"
+                      name="telefone"
+                      value={formData.telefone}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  
+                  {/* Profissional */}
+                  <div>
+                    <label htmlFor="profissional" className="block text-sm font-medium text-gray-700 mb-1">
+                      Você é um profissional de saúde?
+                    </label>
+                    <select
+                      id="profissional"
+                      name="profissional"
+                      value={formData.profissional}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <option value="">Selecione</option>
+                      <option value="médico">Médico</option>
+                      <option value="farmacêutico">Farmacêutico</option>
+                      <option value="enfermeiro">Enfermeiro</option>
+                      <option value="outro_profissional">Outro profissional de saúde</option>
+                      <option value="paciente">Sou paciente/consumidor</option>
+                    </select>
+                  </div>
+                  
+                  {/* Produto */}
+                  <div>
+                    <label htmlFor="produto" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nome do Produto <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="produto"
+                      name="produto"
+                      value={formData.produto}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                        formErrors.produto ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {formErrors.produto && (
+                      <p className="mt-1 text-sm text-red-500">{formErrors.produto}</p>
+                    )}
+                  </div>
+                  
+                  {/* Lote */}
+                  <div>
+                    <label htmlFor="lote" className="block text-sm font-medium text-gray-700 mb-1">
+                      Número do Lote (se disponível)
+                    </label>
+                    <input
+                      type="text"
+                      id="lote"
+                      name="lote"
+                      value={formData.lote}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                </div>
+                
+                {/* Reação Adversa */}
+                <div className="mb-6">
+                  <label htmlFor="reacaoAdversa" className="block text-sm font-medium text-gray-700 mb-1">
+                    Reação Adversa Observada <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="reacaoAdversa"
+                    name="reacaoAdversa"
+                    value={formData.reacaoAdversa}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary ${
+                      formErrors.reacaoAdversa ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  />
+                  {formErrors.reacaoAdversa && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.reacaoAdversa}</p>
+                  )}
+                </div>
+                
+                {/* Descrição */}
+                <div className="mb-6">
+                  <label htmlFor="descricao" className="block text-sm font-medium text-gray-700 mb-1">
+                    Descrição Detalhada do Evento
+                  </label>
+                  <textarea
+                    id="descricao"
+                    name="descricao"
+                    value={formData.descricao}
+                    onChange={handleChange}
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Descreva em detalhes o que aconteceu, incluindo data, horário, sintomas observados e qualquer outra informação relevante."
+                  />
+                </div>
+                
+                {/* Privacidade */}
+                <div className="mb-6">
+                  <label className="flex items-start">
+                    <input
+                      type="checkbox"
+                      name="privacidade"
+                      checked={formData.privacidade}
+                      onChange={handleChange}
+                      className={`mt-1 mr-2 ${formErrors.privacidade ? 'border-red-500' : ''}`}
+                    />
+                    <span className="text-sm text-gray-700">
+                      Li e concordo com a <a href="/privacidade" className="text-primary hover:underline">Política de Privacidade</a>. 
+                      Entendo que minhas informações serão tratadas com confidencialidade e utilizadas apenas para fins de farmacovigilância.
+                      <span className="text-red-500">*</span>
+                    </span>
+                  </label>
+                  {formErrors.privacidade && (
+                    <p className="mt-1 text-sm text-red-500">{formErrors.privacidade}</p>
+                  )}
+                </div>
+                
+                <div className="text-center">
+                  <button
+                    type="submit"
+                    className="bg-primary text-white py-3 px-8 rounded-md hover:bg-primary-hover transition"
+                  >
+                    Enviar Notificação
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      </div>
+    </PageLayout>
+  );
+} 

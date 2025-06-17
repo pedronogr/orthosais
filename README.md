@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Orthosais Farma
 
-## Getting Started
+Este é um projeto de e-commerce para produtos farmacêuticos desenvolvido com [Next.js](https://nextjs.org).
 
-First, run the development server:
+## Começando
+
+Primeiro, instale as dependências:
+
+```bash
+npm install
+```
+
+Em seguida, crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+
+```
+# API Arkama
+NEXT_PUBLIC_ARKAMA_API_TOKEN=seu_token_aqui
+
+# Outras variáveis de ambiente
+NEXT_PUBLIC_SITE_URL=https://orthosais.com.br
+```
+
+Depois, inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Integração com a API Arkama
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Este projeto utiliza a API Arkama para processamento de pedidos. A integração inclui:
 
-## Learn More
+1. **Criar compra**
+   - Endpoint: `POST https://app.arkama.com.br/api/v1/orders`
+   - Uso: Cria uma nova ordem de compra, definindo valor, forma de pagamento, etc.
+   - Autenticação: Via header `Authorization: Bearer API_TOKEN`
 
-To learn more about Next.js, take a look at the following resources:
+2. **Buscar compra**
+   - Endpoint: `GET https://app.arkama.com.br/api/v1/orders/{id}`
+   - Uso: Obtém detalhes de uma compra específica pelo ID
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Estornar (reembolsar) compra**
+   - Endpoint: `POST https://app.arkama.com.br/api/v1/orders/{id}/refund`
+   - Uso: Inicia um reembolso para uma ordem já criada
+   - Autenticação: Também usa token Bearer
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Para configurar a integração, certifique-se de adicionar seu token da API Arkama no arquivo `.env.local`.
 
-## Deploy on Vercel
+## Gerando Build Estático
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Para gerar uma versão estática do site para produção:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+```
+
+Os arquivos estáticos serão gerados na pasta `out/`.
+
+## Tecnologias Utilizadas
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Axios para requisições HTTP
+- API Arkama para processamento de pedidos
+
+## Saiba Mais
+
+Para saber mais sobre o Next.js, consulte os seguintes recursos:
+
+- [Documentação do Next.js](https://nextjs.org/docs) - saiba mais sobre os recursos e API do Next.js.
+- [Aprenda Next.js](https://nextjs.org/learn) - um tutorial interativo de Next.js.
+
+## Deploy
+
+A maneira mais fácil de fazer o deploy do seu aplicativo Next.js é usar a [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) dos criadores do Next.js.
+
+Consulte nossa [documentação de implantação do Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para mais detalhes.
