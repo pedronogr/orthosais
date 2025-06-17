@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  output: 'export',
   images: {
     domains: [
       'pt.farmagranada.com',
