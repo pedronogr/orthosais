@@ -102,6 +102,7 @@ export default function Header() {
                     height={isScrolled ? 40 : 45} 
                     priority
                     className="mr-2 transition-all duration-300"
+                    style={{ width: 'auto', height: 'auto' }}
                   />
                   <Image 
                     src="/images/nome_logo.png" 
@@ -110,6 +111,7 @@ export default function Header() {
                     height={isScrolled ? 30 : 35} 
                     priority
                     className="transition-all duration-300"
+                    style={{ width: 'auto', height: 'auto' }}
                   />
                 </div>
               </Link>
