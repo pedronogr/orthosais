@@ -86,12 +86,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Funções de autenticação
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Em um cenário real, aqui faria uma chamada à API
-      // Por enquanto, simulamos uma autenticação básica
-      if (email && password) {
+      // Validação de credenciais específicas
+      // Apenas estas credenciais serão aceitas
+      if (email === 'pedro@admin.com' && password === 'admin123') {
         const userData = {
-          id: Date.now().toString(),
-          name: email.split('@')[0], // Usa a parte do email antes do @ como nome
+          id: '1',
+          name: 'Pedro Admin',
           email: email
         };
         
@@ -100,6 +100,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('user', JSON.stringify(userData));
         return true;
       }
+      
+      // Usuário comum para teste
+      if (email === 'cliente@teste.com' && password === 'cliente123') {
+        const userData = {
+          id: '2',
+          name: 'Cliente Teste',
+          email: email
+        };
+        
+        setUser(userData);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return true;
+      }
+      
       return false;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
