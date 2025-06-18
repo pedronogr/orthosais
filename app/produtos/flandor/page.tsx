@@ -1,6 +1,8 @@
-import { Metadata } from 'next';
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Breadcrumbs from '../../components/Breadcrumbs';
@@ -9,11 +11,6 @@ import ProductSafety from '../../components/ProductSafety';
 import ProductFAQ from '../../components/ProductFAQ';
 import PromotionBanner from '../../components/PromotionBanner';
 import { useAppContext } from '../../context/AppContext';
-
-export const metadata: Metadata = {
-  title: 'FLANDOR® 500 mg | Suplemento de Curcumina - Orthosais',
-  description: 'Suplemento anti-inflamatório e antioxidante de alta potência com 95% de curcuminoides ativos. Suporte à saúde articular e cardiovascular.',
-};
 
 export default function FlandorPage() {
   // Dados do produto para os componentes
@@ -132,43 +129,15 @@ export default function FlandorPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/carrinho"
-                className="inline-block text-center bg-primary hover:bg-primary-hover font-medium py-3 px-8 rounded-md transition duration-300"
-                style={{ 
-                  color: 'white', 
-                  backgroundColor: 'var(--primary)',
-                  textDecoration: 'none',
-                  display: 'inline-block'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--primary)';
-                  e.currentTarget.style.color = 'white';
-                }}
+                className="inline-block text-center bg-primary hover:bg-primary-hover text-white font-medium py-3 px-8 rounded-md transition-all duration-300"
+                style={{ color: 'white' }}
               >
                 Adicionar ao carrinho
               </Link>
               
               <a
                 href="#informacoes"
-                className="inline-block text-center border border-primary font-medium py-3 px-8 rounded-md transition duration-300"
-                style={{ 
-                  color: 'var(--primary)', 
-                  borderColor: 'var(--primary)',
-                  backgroundColor: 'transparent',
-                  textDecoration: 'none',
-                  display: 'inline-block'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--primary)';
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = 'var(--primary)';
-                }}
+                className="inline-block text-center border border-primary text-primary hover:bg-primary hover:text-white font-medium py-3 px-8 rounded-md transition-all duration-300"
               >
                 Ver mais informações
               </a>
