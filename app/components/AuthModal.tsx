@@ -67,9 +67,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     try {
       const success = await register(name, email, password);
       if (success) {
-        onClose();
+        setName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setActiveTab('login');
       } else {
-        setError('Não foi possível criar a conta');
+        setError('Este email já está cadastrado ou não foi possível criar a conta');
       }
     } catch (err) {
       setError('Ocorreu um erro ao criar a conta');

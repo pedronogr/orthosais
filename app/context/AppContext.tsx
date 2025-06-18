@@ -124,17 +124,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
-      // Em um cenário real, aqui faria uma chamada à API
+      // Validação de email para registro
+      // Não permitir registros com emails já existentes
+      if (email === 'pedro@admin.com' || email === 'cliente@teste.com') {
+        console.error('Email já cadastrado');
+        return false;
+      }
+      
+      // Em um ambiente real, aqui você salvaria no banco de dados
+      // Para este protótipo, vamos apenas simular um registro bem-sucedido
+      // mas sem realmente autenticar o usuário
       if (name && email && password) {
-        const userData = {
-          id: Date.now().toString(),
-          name: name,
-          email: email
-        };
-        
-        setUser(userData);
-        setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(userData));
+        // Apenas retorna sucesso, mas não loga o usuário
+        alert('Registro simulado com sucesso! Por favor, use as credenciais de teste para fazer login.');
         return true;
       }
       return false;
