@@ -166,12 +166,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   Não tem uma conta? Cadastre-se
                 </button>
               </div>
-              
-              <div className="mt-6 p-3 bg-blue-50 text-blue-700 text-xs rounded-md">
-                <strong>Credenciais de teste:</strong><br />
-                Admin: pedro@admin.com / admin123<br />
-                Cliente: cliente@teste.com / cliente123
-              </div>
             </form>
           ) : (
             <form onSubmit={handleRegister}>
