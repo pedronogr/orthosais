@@ -39,7 +39,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (success) {
         onClose();
       } else {
-        setError('Email ou senha inválidos');
+        setError('Email ou senha inválidos. Este sistema aceita apenas as credenciais de teste listadas abaixo.');
       }
     } catch (err) {
       setError('Ocorreu um erro ao fazer login');
@@ -202,6 +202,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </form>
           ) : (
             <form onSubmit={handleRegister}>
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-md mb-4 text-sm">
+                <p className="font-bold">⚠️ ATENÇÃO: Sistema de Demonstração</p>
+                <p>Este é um sistema de demonstração. Novos registros não são realmente armazenados.</p>
+                <p>Após o cadastro, use as credenciais de teste fornecidas na tela de login:</p>
+                <ul className="list-disc pl-5 mt-1">
+                  <li>Admin: pedro@admin.com / admin123</li>
+                  <li>Cliente: cliente@teste.com / cliente123</li>
+                </ul>
+              </div>
+              
               <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Nome Completo
