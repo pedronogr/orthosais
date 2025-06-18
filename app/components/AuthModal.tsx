@@ -85,14 +85,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay com efeito de blur */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        className="fixed inset-0 backdrop-blur-md bg-white/30 z-50"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl z-50 w-full max-w-md">
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white/95 rounded-lg shadow-xl z-50 w-full max-w-md border border-gray-200">
         {/* Header */}
         <div className="flex border-b">
           <button 

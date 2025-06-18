@@ -79,6 +79,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Adicionar suporte para backdrop-filter */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
