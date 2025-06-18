@@ -13,8 +13,14 @@ export const metadata: Metadata = {
   title: "Orthosais Farma | Proteção à Vida",
   description: "Orthosais Farma - Produtos farmacêuticos de extrema qualidade voltados para a proteção à vida.",
   icons: {
-    icon: '/favicon/favicon.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon/favicon.png', sizes: '32x32' },
+      { url: '/images/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: { url: '/favicon/favicon.png', sizes: '180x180' },
   },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -25,7 +31,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <link rel="icon" href="/favicon/favicon.png" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon/favicon.png" type="image/png" />
+        <link rel="icon" href="/images/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon/favicon.png" />
       </head>
       <body className={`${inter.variable} antialiased`}>
         <AppProvider>
