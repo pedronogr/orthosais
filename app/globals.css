@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -70,148 +72,152 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-4);
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-4);
+  }
 
-/* Estilos base para elementos comuns */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.2;
-  margin-bottom: var(--spacing-4);
-}
+  h1 { font-size: var(--font-size-4xl); }
+  h2 { font-size: var(--font-size-3xl); }
+  h3 { font-size: var(--font-size-2xl); }
+  h4 { font-size: var(--font-size-xl); }
+  h5 { font-size: var(--font-size-lg); }
+  h6 { font-size: var(--font-size-base); }
 
-h1 { font-size: var(--font-size-4xl); }
-h2 { font-size: var(--font-size-3xl); }
-h3 { font-size: var(--font-size-2xl); }
-h4 { font-size: var(--font-size-xl); }
-h5 { font-size: var(--font-size-lg); }
-h6 { font-size: var(--font-size-base); }
+  p {
+    margin-bottom: var(--spacing-4);
+  }
 
-p {
-  margin-bottom: var(--spacing-4);
-}
+  a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast) ease;
+  }
 
-a {
-  color: var(--primary);
-  text-decoration: none;
-  transition: color var(--transition-fast) ease;
-}
+  a:hover {
+    color: var(--primary-hover);
+  }
 
-a:hover {
-  color: var(--primary-hover);
-}
-
-button {
-  cursor: pointer;
-  transition: all var(--transition-fast) ease;
-}
-
-/* Utilitários */
-.text-primary { color: var(--primary); }
-.text-secondary { color: var(--secondary); }
-.text-accent { color: var(--accent); }
-
-.bg-primary { background-color: var(--primary); }
-.bg-secondary { background-color: var(--secondary); }
-.bg-accent { background-color: var(--accent); }
-
-.rounded-sm { border-radius: var(--border-radius-sm); }
-.rounded-md { border-radius: var(--border-radius-md); }
-.rounded-lg { border-radius: var(--border-radius-lg); }
-.rounded-xl { border-radius: var(--border-radius-xl); }
-.rounded-2xl { border-radius: var(--border-radius-2xl); }
-
-.shadow-sm { box-shadow: var(--shadow-sm); }
-.shadow-md { box-shadow: var(--shadow-md); }
-.shadow-lg { box-shadow: var(--shadow-lg); }
-
-@media (max-width: 1200px) {
-  .container {
-    padding-left: var(--spacing-4);
-    padding-right: var(--spacing-4);
+  button {
+    cursor: pointer;
+    transition: all var(--transition-fast) ease;
   }
 }
 
-/* Navegação - redefine cores para os links do menu */
-header nav a,
-header .md\:hidden a,
-header a[href="/"],
-header a[href="/sobre"],
-header a[href="/produtos"],
-header a[href="/pesquisa"],
-header a[href="/contato"] {
-  color: inherit !important;
+@layer components {
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-4);
+  }
+
+  /* Navegação - redefine cores para os links do menu */
+  header nav a,
+  header .md\:hidden a,
+  header a[href="/"],
+  header a[href="/sobre"],
+  header a[href="/produtos"],
+  header a[href="/pesquisa"],
+  header a[href="/contato"] {
+    color: inherit !important;
+  }
+
+  /* Classe específica para links da navegação */
+  .nav-link {
+    color: #4b5563 !important; /* text-gray-600 */
+  }
+
+  .nav-link:hover {
+    color: var(--primary) !important;
+  }
+
+  /* Correções específicas para botões na página de produtos */
+  .bg-primary.text-white {
+    color: white !important;
+  }
+
+  a.bg-primary:hover, 
+  button.bg-primary:hover,
+  a.bg-primary.hover\:bg-primary-hover:hover,
+  button.bg-primary.hover\:bg-primary-hover:hover {
+    color: white !important;
+    background-color: var(--primary) !important;
+  }
+
+  /* Botão branco com borda vermelha que permanece branco no hover */
+  a.bg-white.border-primary:hover,
+  button.bg-white.border-primary:hover {
+    background-color: white !important;
+    color: var(--primary) !important; 
+    border-color: var(--primary) !important;
+    opacity: 1 !important;
+    text-decoration: none !important;
+  }
 }
 
-/* Classe específica para links da navegação */
-.nav-link {
-  color: #4b5563 !important; /* text-gray-600 */
-}
+@layer utilities {
+  .text-primary { color: var(--primary); }
+  .text-secondary { color: var(--secondary); }
+  .text-accent { color: var(--accent); }
 
-.nav-link:hover {
-  color: var(--primary) !important;
-}
+  .bg-primary { background-color: var(--primary); }
+  .bg-secondary { background-color: var(--secondary); }
+  .bg-accent { background-color: var(--accent); }
 
-/* Animações */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+  .rounded-sm { border-radius: var(--border-radius-sm); }
+  .rounded-md { border-radius: var(--border-radius-md); }
+  .rounded-lg { border-radius: var(--border-radius-lg); }
+  .rounded-xl { border-radius: var(--border-radius-xl); }
+  .rounded-2xl { border-radius: var(--border-radius-2xl); }
 
-@keyframes slideIn {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+  .shadow-sm { box-shadow: var(--shadow-sm); }
+  .shadow-md { box-shadow: var(--shadow-md); }
+  .shadow-lg { box-shadow: var(--shadow-lg); }
 
-.animate-fade-in {
-  animation: fadeIn var(--transition-normal) ease-out;
-}
+  /* Animações */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
 
-.animate-slide-in {
-  animation: slideIn var(--transition-normal) ease-out;
-}
+  @keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
 
-/* Correções específicas para botões na página de produtos */
-.bg-primary.text-white {
-  color: white !important;
-}
+  .animate-fade-in {
+    animation: fadeIn var(--transition-normal) ease-out;
+  }
 
-a.bg-primary:hover, 
-button.bg-primary:hover,
-a.bg-primary.hover\:bg-primary-hover:hover,
-button.bg-primary.hover\:bg-primary-hover:hover {
-  color: white !important;
-  background-color: var(--primary) !important;
-}
+  .animate-slide-in {
+    animation: slideIn var(--transition-normal) ease-out;
+  }
 
-/* Botão branco com borda vermelha que permanece branco no hover */
-a.bg-white.border-primary:hover,
-button.bg-white.border-primary:hover {
-  background-color: white !important;
-  color: var(--primary) !important; 
-  border-color: var(--primary) !important;
-  opacity: 1 !important;
-  text-decoration: none !important;
-}
+  /* Garantir que links e botões não fiquem transparentes no hover */
+  a:hover, button:hover {
+    opacity: 1 !important;
+  }
 
-/* Garantir que links e botões não fiquem transparentes no hover */
-a:hover, button:hover {
-  opacity: 1 !important;
-}
+  a.border-primary.text-primary:hover {
+    color: white !important;
+  }
 
-a.border-primary.text-primary:hover {
-  color: white !important;
+  @media (max-width: 1200px) {
+    .container {
+      padding-left: var(--spacing-4);
+      padding-right: var(--spacing-4);
+    }
+  }
 }
