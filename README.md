@@ -1,32 +1,74 @@
-# Orthosais Farma
+# Orthosais - E-commerce de Produtos Ortopédicos
 
-Este é um projeto de e-commerce para produtos farmacêuticos desenvolvido com [Next.js](https://nextjs.org).
+Este é um projeto de e-commerce para produtos ortopédicos desenvolvido com Next.js, React e Tailwind CSS.
 
-## Começando
+## Funcionalidades
 
-Primeiro, instale as dependências:
+- Catálogo de produtos
+- Carrinho de compras
+- Sistema de autenticação
+- Painel administrativo
+- Checkout e pagamento
+- Gerenciamento de usuários
+- Análise de dados
+
+## Configuração do Sistema de Autenticação
+
+O projeto suporta dois modos de autenticação:
+
+### 1. Autenticação Local (localStorage)
+
+Por padrão, o sistema usa o armazenamento local do navegador (localStorage) para salvar dados de usuários registrados. Isso é útil para desenvolvimento e demonstração, mas não é recomendado para produção.
+
+Usuários padrão para teste:
+- Admin: pedro@admin.com / admin123
+- Cliente: cliente@teste.com / cliente123
+
+### 2. Autenticação Online com Supabase (Recomendado para Produção)
+
+Para habilitar a autenticação persistente online no Netlify usando Supabase:
+
+1. Crie uma conta no [Supabase](https://supabase.io/)
+2. Crie um novo projeto
+3. Configure uma tabela `users` com os campos:
+   - id (uuid, primary key)
+   - name (text)
+   - email (text, unique)
+   - created_at (timestamp)
+
+4. No painel do Netlify, vá para "Site settings" > "Environment variables" e adicione:
+   ```
+   SUPABASE_URL=sua_url_do_supabase
+   SUPABASE_SERVICE_KEY=sua_chave_de_serviço_do_supabase
+   ```
+
+5. Faça o deploy do site novamente para aplicar as alterações
+
+Isso permitirá que os usuários registrados persistam entre sessões e dispositivos, com os dados armazenados de forma segura no Supabase.
+
+## Desenvolvimento Local
 
 ```bash
+# Instalar dependências
 npm install
-```
 
-Em seguida, crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
-
-```
-# API Arkama
-NEXT_PUBLIC_ARKAMA_API_TOKEN=seu_token_aqui
-
-# Outras variáveis de ambiente
-NEXT_PUBLIC_SITE_URL=https://orthosais.com.br
-```
-
-Depois, inicie o servidor de desenvolvimento:
-
-```bash
+# Iniciar servidor de desenvolvimento
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
+## Deploy no Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/seu-usuario/orthosais)
+
+Após o deploy, configure as variáveis de ambiente conforme descrito acima para habilitar a autenticação online.
+
+## Tecnologias Utilizadas
+
+- Next.js
+- React
+- Tailwind CSS
+- Netlify Functions
+- Supabase (opcional, para autenticação online)
 
 ## Integração com a API Arkama
 
@@ -57,14 +99,6 @@ npm run build
 ```
 
 Os arquivos estáticos serão gerados na pasta `out/`.
-
-## Tecnologias Utilizadas
-
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Axios para requisições HTTP
-- API Arkama para processamento de pedidos
 
 ## Saiba Mais
 

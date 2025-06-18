@@ -1,6 +1,17 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  functions = "netlify/functions"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [[plugins]]
-  package = "@netlify/plugin-nextjs" 
+  package = "@netlify/plugin-nextjs"
+
+[dev]
+  functions = "netlify/functions"
+  publish = ".next"
+  framework = "#auto"
+  autoLaunch = true 

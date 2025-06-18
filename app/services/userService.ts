@@ -1,4 +1,4 @@
-// Serviço para gerenciar usuários usando IndexedDB
+// Serviço para gerenciar usuários usando IndexedDB e Netlify Functions
 
 export interface User {
   id: string; // UUID
@@ -58,8 +58,51 @@ export const initUserDB = (): Promise<IDBDatabase> => {
   });
 };
 
+// Função para obter o token de autenticação
+const getAuthToken = (): string | null => {
+  try {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return JSON.parse(user).id;
+    }
+    return null;
+  } catch (error) {
+    console.error('Erro ao obter token de autenticação:', error);
+    return null;
+  }
+};
+
 // Adicionar usuário
 export const addUser = async (user: Omit<User, 'createdAt'>): Promise<string> => {
+  try {
+    // Tentar adicionar usuário via Netlify Function
+    const authToken = getAuthToken();
+    if (authToken) {
+      const response = await fetch('/.netlify/functions/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          action: 'addUser',
+          user: {
+            ...user,
+            created_at: new Date().toISOString()
+          }
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return result.user.id;
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao adicionar usuário via API, usando IndexedDB como fallback:', error);
+  }
+
+  // Fallback para IndexedDB
   const db = await initUserDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], 'readwrite');
@@ -72,21 +115,84 @@ export const addUser = async (user: Omit<User, 'createdAt'>): Promise<string> =>
   });
 };
 
-// Buscar todos usuários
+// Obter todos os usuários
 export const getAllUsers = async (): Promise<User[]> => {
+  try {
+    // Tentar obter usuários via Netlify Function
+    const authToken = getAuthToken();
+    if (authToken) {
+      const response = await fetch('/.netlify/functions/users', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (!result.isLocalData) {
+          return result.users.map((user: any) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            role: user.role || 'customer',
+            status: user.status || 'active',
+            kycVerified: user.kyc_verified || false,
+            createdAt: new Date(user.created_at).getTime()
+          }));
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao obter usuários via API, usando IndexedDB como fallback:', error);
+  }
+
+  // Fallback para IndexedDB
   const db = await initUserDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], 'readonly');
     const store = tx.objectStore(STORE_NAME);
     const req = store.getAll();
-    req.onsuccess = () => resolve(req.result as User[]);
+    req.onsuccess = () => resolve(req.result || []);
     req.onerror = (e) => reject((e.target as IDBRequest).error);
     tx.oncomplete = () => db.close();
   });
 };
 
-// Buscar por ID
+// Obter usuário por ID
 export const getUserById = async (id: string): Promise<User | null> => {
+  try {
+    // Tentar obter usuário via Netlify Function
+    const authToken = getAuthToken();
+    if (authToken) {
+      const response = await fetch(`/.netlify/functions/users?id=${id}`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.user && !result.isLocalData) {
+          const user = result.user;
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone || '',
+            role: user.role || 'customer',
+            status: user.status || 'active',
+            kycVerified: user.kyc_verified || false,
+            createdAt: new Date(user.created_at).getTime()
+          };
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao obter usuário via API, usando IndexedDB como fallback:', error);
+  }
+
+  // Fallback para IndexedDB
   const db = await initUserDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], 'readonly');
@@ -100,19 +206,80 @@ export const getUserById = async (id: string): Promise<User | null> => {
 
 // Atualizar usuário
 export const updateUser = async (user: User): Promise<boolean> => {
+  try {
+    // Tentar atualizar usuário via Netlify Function
+    const authToken = getAuthToken();
+    if (authToken) {
+      const response = await fetch('/.netlify/functions/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          action: 'updateUser',
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            status: user.status,
+            kyc_verified: user.kycVerified
+          }
+        })
+      });
+
+      if (response.ok) {
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao atualizar usuário via API, usando IndexedDB como fallback:', error);
+  }
+
+  // Fallback para IndexedDB
   const db = await initUserDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], 'readwrite');
     const store = tx.objectStore(STORE_NAME);
     const req = store.put(user);
     req.onsuccess = () => resolve(true);
-    req.onerror = (e) => reject((e.target as IDBRequest).error);
+    req.onerror = (e) => {
+      console.error('Erro ao atualizar usuário no IndexedDB:', e);
+      reject((e.target as IDBRequest).error);
+    };
     tx.oncomplete = () => db.close();
   });
 };
 
-// Deletar usuário
+// Excluir usuário
 export const deleteUser = async (id: string): Promise<boolean> => {
+  try {
+    // Tentar excluir usuário via Netlify Function
+    const authToken = getAuthToken();
+    if (authToken) {
+      const response = await fetch('/.netlify/functions/users', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+          action: 'deleteUser',
+          id
+        })
+      });
+
+      if (response.ok) {
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao excluir usuário via API, usando IndexedDB como fallback:', error);
+  }
+
+  // Fallback para IndexedDB
   const db = await initUserDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction([STORE_NAME], 'readwrite');
@@ -124,12 +291,18 @@ export const deleteUser = async (id: string): Promise<boolean> => {
   });
 };
 
-// Bloquear / Desbloquear
+// Alternar bloqueio de usuário
 export const toggleBlockUser = async (id: string): Promise<boolean> => {
-  const user = await getUserById(id);
-  if (!user) return false;
-  const newStatus = user.status === 'active' ? 'blocked' : 'active';
-  return updateUser({ ...user, status: newStatus });
+  try {
+    const user = await getUserById(id);
+    if (!user) return false;
+    
+    user.status = user.status === 'active' ? 'blocked' : 'active';
+    return await updateUser(user);
+  } catch (error) {
+    console.error('Erro ao alternar bloqueio do usuário:', error);
+    return false;
+  }
 };
 
 // Reset de senha (placeholder)

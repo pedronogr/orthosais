@@ -58,16 +58,14 @@ export default function Footer() {
                 alt="Orthosais Logo" 
                 width={55} 
                 height={55} 
-                className="mr-2 transition-transform duration-300 hover:scale-105"
-                style={{ width: 'auto', height: 'auto' }}
+                  className="mr-2 transition-transform duration-300 hover:scale-105"
               />
               <Image 
                 src="/images/nome_logo.png" 
                 alt="Orthosais Farma" 
                 width={190} 
                 height={40}
-                className="brightness-150 transition-transform duration-300 hover:scale-105"
-                style={{ width: 'auto', height: 'auto' }}
+                  className="brightness-150 transition-transform duration-300 hover:scale-105"
               />
             </div>
               <p className="text-gray-300 mb-6 text-sm">
