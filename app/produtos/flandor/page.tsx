@@ -137,10 +137,11 @@ export default function FlandorPage() {
               
               <a
                 href="#informacoes"
-                className="inline-block text-center bg-primary text-white font-medium py-3 px-8 rounded-md transition-all duration-300"
+                className="inline-block text-center bg-white border border-primary text-primary font-medium py-3 px-8 rounded-md transition-all duration-300"
                 style={{ 
-                  backgroundColor: 'var(--primary)',
-                  color: 'white'
+                  backgroundColor: 'white',
+                  color: 'var(--primary)',
+                  borderColor: 'var(--primary)'
                 }}
               >
                 Ver mais informações

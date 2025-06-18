@@ -197,6 +197,14 @@ button.bg-primary.hover\:bg-primary-hover:hover {
   background-color: var(--primary) !important;
 }
 
+/* Botão branco com borda vermelha que permanece branco no hover */
+a.bg-white.border-primary:hover,
+button.bg-white.border-primary:hover {
+  background-color: white !important;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
 a.border-primary.text-primary:hover {
   color: white !important;
 }
