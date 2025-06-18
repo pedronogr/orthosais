@@ -13,20 +13,25 @@ export default function CuponsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loadAttempts, setLoadAttempts] = useState(0);
 
   // Garante que o tempo entre tentativas de loading é suficiente
   const loadCoupons = useCallback(async () => {
+    if (loading) return; // Evita chamadas simultâneas
+    
     setLoading(true);
     setError(null);
     try {
       // Adiciona um timestamp para evitar cache
       const timestamp = new Date().getTime();
+      console.log(`Iniciando carregamento de cupons (${timestamp}), tentativa ${loadAttempts + 1}`);
+      
       const cps = await getAllCoupons();
       console.log(`Cupons carregados (${timestamp}):`, cps);
       setCoupons(cps);
       
-      // Se não há cupons, cria um cupom padrão
-      if (cps.length === 0) {
+      // Se não há cupons e ainda não tentamos criar o cupom padrão
+      if (cps.length === 0 && loadAttempts < 1) {
         const defaultCoupon = {
           id: 'BEMVINDO10',
           code: 'BEMVINDO10',
@@ -47,6 +52,9 @@ export default function CuponsPage() {
         setCoupons(updatedCoupons);
         setSuccess("Cupom padrão criado com sucesso!");
       }
+      
+      // Incrementa o contador de tentativas
+      setLoadAttempts(prev => prev + 1);
     } catch (e) {
       console.error('Erro ao carregar cupons:', e);
       setError(`Não foi possível carregar os cupons: ${e instanceof Error ? e.message : 'Erro desconhecido'}`);
@@ -55,22 +63,14 @@ export default function CuponsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [loadAttempts]);
 
   useEffect(() => {
-    loadCoupons();
-    
-    // Tenta carregar novamente após 2 segundos se não houver cupons
-    // Isso ajuda em casos onde o banco de dados MongoDB Atlas pode estar inicializando
-    const timer = setTimeout(() => {
-      if (coupons.length === 0 && !loading) {
-        console.log("Tentando carregar cupons novamente...");
-        loadCoupons();
-      }
-    }, 2000);
-    
-    return () => clearTimeout(timer);
-  }, [loadCoupons, loading, coupons.length]);
+    // Carrega os cupons apenas uma vez ao montar o componente
+    if (loadAttempts === 0) {
+      loadCoupons();
+    }
+  }, [loadCoupons, loadAttempts]);
 
   const handleCreate = async () => {
     setError(null);
@@ -137,10 +137,18 @@ export default function CuponsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Cupons, Descontos & Campanhas</h1>
         <div className="flex gap-2">
-          <button onClick={handleRefresh} className="bg-blue-500 text-white px-4 py-2 rounded-md">
-            Atualizar
+          <button 
+            onClick={handleRefresh} 
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+            disabled={loading}
+          >
+            {loading ? 'Carregando...' : 'Atualizar'}
           </button>
-          <button onClick={handleCreate} className="bg-primary text-white px-4 py-2 rounded-md">
+          <button 
+            onClick={handleCreate} 
+            className="bg-primary text-white px-4 py-2 rounded-md"
+            disabled={loading}
+          >
             Novo Cupom
           </button>
         </div>
