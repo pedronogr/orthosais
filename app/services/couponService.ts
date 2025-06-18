@@ -16,19 +16,34 @@ const API_URL = '/.netlify/functions/coupons';
 
 // Função auxiliar para fazer chamadas de API
 const fetchAPI = async (endpoint: string, options?: RequestInit) => {
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    ...options,
-  });
-  
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({}));
-    throw new Error(error.error || `Erro na API: ${response.status}`);
+  console.log(`Chamando API: ${API_URL}${endpoint}`);
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      ...options,
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      let error;
+      try {
+        error = JSON.parse(errorText);
+      } catch {
+        error = { error: errorText };
+      }
+      console.error(`Erro na API (${response.status}):`, error);
+      throw new Error(error.error || `Erro na API: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`Resposta API (${endpoint}):`, data);
+    return data;
+  } catch (error) {
+    console.error(`Falha ao chamar API ${endpoint}:`, error);
+    throw error;
   }
-  
-  return response.json();
 };
 
 // Função de fallback para IndexedDB (para compatibilidade com implementação anterior)

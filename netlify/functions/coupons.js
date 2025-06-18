@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 // URI de conexão para o MongoDB Atlas
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://orthosais:${process.env.MONGODB_PASSWORD}@cluster0.mongodb.net/orthosais";
+const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://orthosais:${process.env.MONGODB_PASSWORD}@cluster0.mongodb.net/orthosais`;
 const DB_NAME = "orthosais";
 const COLLECTION = "coupons";
 
@@ -13,14 +13,23 @@ const connectToDatabase = async () => {
     return cachedDb;
   }
   
-  const client = await MongoClient.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  
-  const db = client.db(DB_NAME);
-  cachedDb = db;
-  return db;
+  try {
+    console.log("Conectando ao MongoDB...");
+    console.log("URI:", MONGODB_URI.replace(/mongodb\+srv:\/\/[^:]+:[^@]+@/, "mongodb+srv://***:***@"));
+    
+    const client = await MongoClient.connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    console.log("Conexão estabelecida com sucesso!");
+    const db = client.db(DB_NAME);
+    cachedDb = db;
+    return db;
+  } catch (error) {
+    console.error("Erro na conexão com MongoDB:", error);
+    throw error;
+  }
 };
 
 exports.handler = async (event, context) => {
@@ -43,13 +52,17 @@ exports.handler = async (event, context) => {
   }
   
   try {
+    console.log(`Recebida requisição ${event.httpMethod} para ${event.path}`);
+    
     const db = await connectToDatabase();
     const coupons = db.collection(COLLECTION);
     const path = event.path.split('/').pop();
     
     // GET /coupons - Lista todos os cupons
     if (event.httpMethod === 'GET' && !path.includes('verify')) {
+      console.log("Buscando todos os cupons");
       const results = await coupons.find({}).toArray();
+      console.log(`Encontrados ${results.length} cupons`);
       
       return {
         statusCode: 200,
