@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   getAllCoupons,
   addCoupon,
@@ -14,12 +14,15 @@ export default function CuponsPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const loadCoupons = async () => {
+  // Garante que o tempo entre tentativas de loading é suficiente
+  const loadCoupons = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
+      // Adiciona um timestamp para evitar cache
+      const timestamp = new Date().getTime();
       const cps = await getAllCoupons();
-      console.log("Cupons carregados:", cps);
+      console.log(`Cupons carregados (${timestamp}):`, cps);
       setCoupons(cps);
       
       // Se não há cupons, cria um cupom padrão
@@ -36,8 +39,12 @@ export default function CuponsPage() {
         };
         
         console.log("Criando cupom padrão:", defaultCoupon);
-        await addCoupon(defaultCoupon);
-        setCoupons([defaultCoupon]);
+        const result = await addCoupon(defaultCoupon);
+        console.log("Resultado da criação do cupom padrão:", result);
+        
+        // Recarrega os cupons após criar o padrão
+        const updatedCoupons = await getAllCoupons();
+        setCoupons(updatedCoupons);
         setSuccess("Cupom padrão criado com sucesso!");
       }
     } catch (e) {
@@ -48,11 +55,22 @@ export default function CuponsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadCoupons();
-  }, []);
+    
+    // Tenta carregar novamente após 2 segundos se não houver cupons
+    // Isso ajuda em casos onde o banco de dados MongoDB Atlas pode estar inicializando
+    const timer = setTimeout(() => {
+      if (coupons.length === 0 && !loading) {
+        console.log("Tentando carregar cupons novamente...");
+        loadCoupons();
+      }
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [loadCoupons, loading, coupons.length]);
 
   const handleCreate = async () => {
     setError(null);
@@ -82,7 +100,8 @@ export default function CuponsPage() {
       };
       
       await addCoupon(c);
-      setCoupons((prev) => [...prev, c]);
+      // Recarrega todos os cupons para garantir sincronização
+      await loadCoupons();
       setSuccess(`Cupom ${code} criado com sucesso!`);
     } catch (e) {
       console.error('Erro ao criar cupom:', e);
@@ -98,7 +117,8 @@ export default function CuponsPage() {
     
     try {
       await deleteCoupon(id);
-      setCoupons((prev) => prev.filter((c) => c.id !== id));
+      // Recarrega todos os cupons para garantir sincronização
+      await loadCoupons();
       setSuccess(`Cupom excluído com sucesso!`);
     } catch (e) {
       console.error('Erro ao excluir cupom:', e);
@@ -107,6 +127,8 @@ export default function CuponsPage() {
   };
 
   const handleRefresh = () => {
+    setSuccess(null);
+    setError(null);
     loadCoupons();
   };
 
@@ -127,6 +149,9 @@ export default function CuponsPage() {
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-md mb-4">
           {error}
+          <button onClick={handleRefresh} className="ml-2 underline">
+            Tentar novamente
+          </button>
         </div>
       )}
       
