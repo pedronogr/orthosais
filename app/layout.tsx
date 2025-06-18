@@ -15,12 +15,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon/favicon.png', sizes: '32x32' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon/favicon.png', sizes: '32x32', type: 'image/png' },
     ],
-    apple: { url: '/favicon/favicon.png', sizes: '180x180' },
+    apple: { url: '/favicon/favicon.png', sizes: '180x180', type: 'image/png' },
   },
-  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -31,10 +29,10 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon/favicon.png" type="image/png" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon/favicon.png" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/favicon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${inter.variable} antialiased`}>
         <AppProvider>
