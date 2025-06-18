@@ -39,7 +39,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       if (success) {
         onClose();
       } else {
-        setError('Email ou senha inválidos. Este sistema aceita apenas as credenciais de teste listadas abaixo.');
+        setError('Email ou senha inválidos. Verifique suas credenciais e tente novamente.');
       }
     } catch (err) {
       setError('Ocorreu um erro ao fazer login');
@@ -74,7 +74,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
-        setSuccessMessage('IMPORTANTE: Este é um sistema de demonstração. Por favor, use APENAS as credenciais de teste abaixo para fazer login. Os dados que você acabou de cadastrar não são armazenados.');
+        setSuccessMessage('Cadastro realizado com sucesso! Agora você pode fazer login com suas credenciais.');
         setActiveTab('login');
       } else {
         setError('Este email já está cadastrado ou não foi possível criar a conta');
@@ -186,7 +186,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
               
               <div className="mt-6 p-3 bg-blue-50 text-blue-700 text-xs rounded-md">
-                <p className="font-semibold mb-1 text-center text-sm">⚠️ ATENÇÃO: USE ESTAS CREDENCIAIS ⚠️</p>
+                <p className="font-semibold mb-1 text-center text-sm">Credenciais de Teste Disponíveis:</p>
                 <div className="border border-blue-200 rounded p-2 mb-2 bg-white">
                   <p className="font-bold">Admin:</p>
                   <p>Email: pedro@admin.com</p>
@@ -197,21 +197,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <p>Email: cliente@teste.com</p>
                   <p>Senha: cliente123</p>
                 </div>
-                <p className="mt-2 text-center">Este é um sistema de demonstração. Novos registros não são armazenados.</p>
+                <p className="mt-2 text-center">Você também pode criar sua própria conta e fazer login com ela.</p>
               </div>
             </form>
           ) : (
             <form onSubmit={handleRegister}>
-              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-md mb-4 text-sm">
-                <p className="font-bold">⚠️ ATENÇÃO: Sistema de Demonstração</p>
-                <p>Este é um sistema de demonstração. Novos registros não são realmente armazenados.</p>
-                <p>Após o cadastro, use as credenciais de teste fornecidas na tela de login:</p>
-                <ul className="list-disc pl-5 mt-1">
-                  <li>Admin: pedro@admin.com / admin123</li>
-                  <li>Cliente: cliente@teste.com / cliente123</li>
-                </ul>
-              </div>
-              
               <div className="mb-4">
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Nome Completo

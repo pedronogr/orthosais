@@ -87,7 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       // Validação de credenciais específicas
-      // Apenas estas credenciais serão aceitas
+      // Credenciais fixas
       if (email === 'pedro@admin.com' && password === 'admin123') {
         const userData = {
           id: '1',
@@ -115,6 +115,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return true;
       }
       
+      // Verificar usuários registrados no localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const foundUser = registeredUsers.find((u: any) => 
+        u.email === email && u.password === password
+      );
+      
+      if (foundUser) {
+        const userData = {
+          id: foundUser.id,
+          name: foundUser.name,
+          email: foundUser.email
+        };
+        
+        setUser(userData);
+        setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return true;
+      }
+      
       return false;
     } catch (error) {
       console.error('Erro ao fazer login:', error);
@@ -125,17 +144,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
       // Validação de email para registro
-      // Não permitir registros com emails já existentes
+      // Não permitir registros com emails já existentes (fixos)
       if (email === 'pedro@admin.com' || email === 'cliente@teste.com') {
         console.error('Email já cadastrado');
         return false;
       }
       
-      // Em um ambiente real, aqui você salvaria no banco de dados
-      // Para este protótipo, vamos apenas simular um registro bem-sucedido
-      // mas sem realmente autenticar o usuário
+      // Verificar se o email já está registrado no localStorage
+      const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      if (registeredUsers.some((user: any) => user.email === email)) {
+        console.error('Email já cadastrado');
+        return false;
+      }
+      
+      // Registrar novo usuário
       if (name && email && password) {
-        console.log('Registro simulado para:', email);
+        const newUser = {
+          id: Date.now().toString(),
+          name,
+          email,
+          password // Em um sistema real, nunca armazene senhas em texto puro
+        };
+        
+        // Adicionar à lista de usuários registrados
+        registeredUsers.push(newUser);
+        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+        
+        console.log('Novo usuário registrado:', email);
         return true;
       }
       return false;
