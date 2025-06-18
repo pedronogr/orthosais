@@ -132,14 +132,43 @@ export default function FlandorPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 href="/carrinho"
-                className="inline-block text-center bg-primary hover:bg-primary-hover text-white font-medium py-3 px-8 rounded-md transition"
+                className="inline-block text-center bg-primary hover:bg-primary-hover font-medium py-3 px-8 rounded-md transition duration-300"
+                style={{ 
+                  color: 'white', 
+                  backgroundColor: 'var(--primary)',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary-hover)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
               >
                 Adicionar ao carrinho
               </Link>
               
               <a
                 href="#informacoes"
-                className="inline-block text-center border border-primary text-primary hover:bg-primary hover:text-white font-medium py-3 px-8 rounded-md transition"
+                className="inline-block text-center border border-primary font-medium py-3 px-8 rounded-md transition duration-300"
+                style={{ 
+                  color: 'var(--primary)', 
+                  borderColor: 'var(--primary)',
+                  backgroundColor: 'transparent',
+                  textDecoration: 'none',
+                  display: 'inline-block'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary)';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--primary)';
+                }}
               >
                 Ver mais informações
               </a>

@@ -183,3 +183,20 @@ header a[href="/contato"] {
 .animate-slide-in {
   animation: slideIn var(--transition-normal) ease-out;
 }
+
+/* Correções específicas para botões na página de produtos */
+.bg-primary.text-white {
+  color: white !important;
+}
+
+a.bg-primary:hover, 
+button.bg-primary:hover,
+a.bg-primary.hover\:bg-primary-hover:hover,
+button.bg-primary.hover\:bg-primary-hover:hover {
+  color: white !important;
+  background-color: var(--primary-hover);
+}
+
+a.border-primary.text-primary:hover {
+  color: white !important;
+}
