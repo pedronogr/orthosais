@@ -135,8 +135,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Para este protótipo, vamos apenas simular um registro bem-sucedido
       // mas sem realmente autenticar o usuário
       if (name && email && password) {
-        // Apenas retorna sucesso, mas não loga o usuário
-        alert('Registro simulado com sucesso! Por favor, use as credenciais de teste para fazer login.');
+        console.log('Registro simulado para:', email);
         return true;
       }
       return false;

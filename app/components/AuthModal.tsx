@@ -15,6 +15,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   
   const { login, register } = useAppContext();
@@ -24,6 +25,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
     
     if (!email || !password) {
@@ -50,6 +52,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setLoading(true);
     
     if (!name || !email || !password || !confirmPassword) {
@@ -71,6 +74,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
+        setSuccessMessage('Cadastro realizado com sucesso! Por favor, use as credenciais de teste para fazer login.');
         setActiveTab('login');
       } else {
         setError('Este email já está cadastrado ou não foi possível criar a conta');
@@ -97,13 +101,21 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <div className="flex border-b">
           <button 
             className={`flex-1 py-4 text-center font-medium ${activeTab === 'login' ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('login')}
+            onClick={() => {
+              setActiveTab('login');
+              setError('');
+              setSuccessMessage('');
+            }}
           >
             Login
           </button>
           <button 
             className={`flex-1 py-4 text-center font-medium ${activeTab === 'register' ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('register')}
+            onClick={() => {
+              setActiveTab('register');
+              setError('');
+              setSuccessMessage('');
+            }}
           >
             Cadastro
           </button>
@@ -114,6 +126,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {error && (
             <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4 text-sm">
               {error}
+            </div>
+          )}
+          
+          {successMessage && (
+            <div className="bg-green-50 text-green-600 p-3 rounded-md mb-4 text-sm">
+              {successMessage}
             </div>
           )}
           
@@ -165,6 +183,12 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 >
                   Não tem uma conta? Cadastre-se
                 </button>
+              </div>
+              
+              <div className="mt-6 p-3 bg-blue-50 text-blue-700 text-xs rounded-md">
+                <p className="font-semibold mb-1">Credenciais para teste:</p>
+                <p>Admin: pedro@admin.com / admin123</p>
+                <p>Cliente: cliente@teste.com / cliente123</p>
               </div>
             </form>
           ) : (
