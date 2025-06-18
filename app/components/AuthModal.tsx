@@ -91,7 +91,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <>
       {/* Overlay */}
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        className="fixed inset-0 bg-gradient-to-br from-primary/20 via-secondary/15 to-white/30 backdrop-blur-sm z-50"
         onClick={onClose}
       />
       
@@ -183,21 +183,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 >
                   Não tem uma conta? Cadastre-se
                 </button>
-              </div>
-              
-              <div className="mt-6 p-3 bg-blue-50 text-blue-700 text-xs rounded-md">
-                <p className="font-semibold mb-1 text-center text-sm">Credenciais de Teste Disponíveis:</p>
-                <div className="border border-blue-200 rounded p-2 mb-2 bg-white">
-                  <p className="font-bold">Admin:</p>
-                  <p>Email: pedro@admin.com</p>
-                  <p>Senha: admin123</p>
-                </div>
-                <div className="border border-blue-200 rounded p-2 bg-white">
-                  <p className="font-bold">Cliente:</p>
-                  <p>Email: cliente@teste.com</p>
-                  <p>Senha: cliente123</p>
-                </div>
-                <p className="mt-2 text-center">Você também pode criar sua própria conta e fazer login com ela.</p>
               </div>
             </form>
           ) : (
