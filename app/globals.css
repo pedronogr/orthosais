@@ -194,7 +194,7 @@ button.bg-primary:hover,
 a.bg-primary.hover\:bg-primary-hover:hover,
 button.bg-primary.hover\:bg-primary-hover:hover {
   color: white !important;
-  background-color: var(--primary-hover);
+  background-color: var(--primary) !important;
 }
 
 a.border-primary.text-primary:hover {
