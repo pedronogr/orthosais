@@ -9,6 +9,7 @@ import Footer from '../components/Footer';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useAppContext } from '../context/AppContext';
 import { getAllCoupons, updateCoupon, type Coupon } from '../services/couponService';
+import { verifyCoupon, incrementCouponUse } from '../services/couponService';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -137,26 +138,40 @@ export default function CheckoutPage() {
   // aplicar cupom
   const handleApplyCoupon = async () => {
     if (!couponCode) return;
-    const coupons = await getAllCoupons();
-    const cup = coupons.find((c) => c.code.toLowerCase() === couponCode.toLowerCase());
-    if (!cup) {
-      alert('Cupom inválido');
-      return;
+    
+    try {
+      const result = await verifyCoupon(couponCode);
+      
+      if (!result.coupon) {
+        alert('Cupom não encontrado');
+        return;
+      }
+      
+      if (!result.isValid) {
+        alert(`Cupom inválido: ${result.reason === 'expirado' ? 'expirado' : 'limite de usos atingido'}`);
+        return;
+      }
+      
+      // Calcular desconto
+      const discount = result.coupon.type === 'percent' 
+        ? cartTotal * (result.coupon.value / 100) 
+        : result.coupon.value;
+      
+      setDiscountValue(discount);
+      setCouponApplied(result.coupon);
+      
+      // Salvar o cupom aplicado no localStorage para usar na página de pagamento
+      localStorage.setItem('appliedCoupon', JSON.stringify({
+        coupon: result.coupon,
+        discountValue: discount
+      }));
+      
+      // Incrementar o uso do cupom
+      await incrementCouponUse(result.coupon.id);
+    } catch (err) {
+      console.error("Erro ao aplicar cupom:", err);
+      alert('Não foi possível verificar o cupom. Tente novamente.');
     }
-    if (cup.expiresAt < Date.now()) {
-      alert('Cupom expirado');
-      return;
-    }
-    if (cup.uses >= cup.maxUses) {
-      alert('Cupom esgotado');
-      return;
-    }
-    // calcular desconto
-    const discount = cup.type === 'percent' ? cartTotal * (cup.value / 100) : cup.value;
-    setDiscountValue(discount);
-    setCouponApplied(cup);
-    // incrementar uses
-    await updateCoupon({ ...cup, uses: cup.uses + 1 });
   };
   
   return (

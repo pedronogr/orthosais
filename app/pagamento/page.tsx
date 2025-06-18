@@ -25,6 +25,7 @@ export default function PaymentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   
   // Verificar se o carrinho está vazio ou se não há endereço de entrega
   useEffect(() => {
@@ -41,6 +42,17 @@ export default function PaymentPage() {
     } catch (err) {
       console.error('Erro ao carregar endereço de entrega:', err);
       router.push('/checkout');
+    }
+    
+    // Carregar cupom aplicado, se houver
+    const savedCoupon = localStorage.getItem('appliedCoupon');
+    if (savedCoupon) {
+      try {
+        const parsedCoupon = JSON.parse(savedCoupon);
+        setAppliedCoupon(parsedCoupon);
+      } catch (err) {
+        console.error('Erro ao carregar cupom aplicado:', err);
+      }
     }
     
     // Verificar carrinho
@@ -110,7 +122,11 @@ export default function PaymentPage() {
           zipCode: shippingAddress.cep,
           number: shippingAddress.number,
           complement: shippingAddress.complement || ''
-        }
+        },
+        coupon: appliedCoupon ? {
+          code: appliedCoupon.coupon.code,
+          discount: appliedCoupon.discountValue
+        } : null
       };
       
       // Enviar para a API Arkama
@@ -136,7 +152,10 @@ export default function PaymentPage() {
   
   // Cálculo do frete (será substituído por API de frete)
   const shippingCost = 15.90;
-  const totalWithShipping = cartTotal + shippingCost;
+  
+  // Cálculo com desconto de cupom
+  const discountValue = appliedCoupon ? appliedCoupon.discountValue : 0;
+  const totalWithShipping = cartTotal + shippingCost - discountValue;
   
   if (!shippingAddress) {
     return null; // Aguardando carregamento ou redirecionamento
@@ -423,6 +442,13 @@ export default function PaymentPage() {
                     <span className="text-gray-600">Frete</span>
                     <span className="text-gray-800 font-medium">R$ {shippingCost.toFixed(2).replace('.', ',')}</span>
                   </div>
+                  
+                  {appliedCoupon && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Cupom {appliedCoupon.coupon.code}</span>
+                      <span>- R$ {appliedCoupon.discountValue.toFixed(2).replace('.', ',')}</span>
+                    </div>
+                  )}
                   
                   <div className="border-t pt-4 mt-4">
                     <div className="flex justify-between">

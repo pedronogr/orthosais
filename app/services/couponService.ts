@@ -11,89 +11,180 @@ export interface Coupon {
   createdAt: number;
 }
 
-const DB_NAME = 'orthosais_db';
-const STORE_NAME = 'coupons';
-const DB_VERSION = 5;
+// URL base da API de cupons do Netlify Functions
+const API_URL = '/.netlify/functions/coupons';
 
-const initDB = (): Promise<IDBDatabase> => {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onerror = (e) => rej((e.target as IDBRequest).error);
-    req.onupgradeneeded = (e) => {
-      const db = (e.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const s = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-        s.createIndex('code', 'code', { unique: true });
-        s.createIndex('expiresAt', 'expiresAt', { unique: false });
-      }
-    };
-    req.onsuccess = (e) => {
-      const db = (e.target as IDBOpenDBRequest).result;
-      // Se por algum motivo a store ainda não existe (primer uso após serviços anteriores), faz upgrade manual
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const newVersion = db.version + 1;
-        db.close();
-        const req2 = indexedDB.open(DB_NAME, newVersion);
-        req2.onupgradeneeded = (ev) => {
-          const db2 = (ev.target as IDBOpenDBRequest).result;
-          if (!db2.objectStoreNames.contains(STORE_NAME)) {
-            const s = db2.createObjectStore(STORE_NAME, { keyPath: 'id' });
-            s.createIndex('code', 'code', { unique: true });
-            s.createIndex('expiresAt', 'expiresAt', { unique: false });
-          }
-        };
-        req2.onsuccess = (ev) => res((ev.target as IDBOpenDBRequest).result);
-        req2.onerror = (ev) => rej((ev.target as IDBRequest).error);
-      } else {
-        res(db);
-      }
-    };
+// Função auxiliar para fazer chamadas de API
+const fetchAPI = async (endpoint: string, options?: RequestInit) => {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...options,
   });
+  
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Erro na API: ${response.status}`);
+  }
+  
+  return response.json();
 };
 
+// Função de fallback para IndexedDB (para compatibilidade com implementação anterior)
+let fallbackToIndexedDB = false;
+
+// Objeto de armazenamento local para fallback em clientes
+const localCouponStore: { [key: string]: Coupon } = {};
+
 export const addCoupon = async (c: Coupon): Promise<string> => {
-  const db = await initDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    tx.objectStore(STORE_NAME).add(c);
-    tx.oncomplete = () => {
-      db.close();
-      res(c.id);
-    };
-    tx.onerror = (e) => rej((e.target as IDBRequest).error);
-  });
+  try {
+    if (fallbackToIndexedDB) {
+      console.log('Usando armazenamento local para cupons');
+      localCouponStore[c.id] = c;
+      return c.id;
+    }
+    
+    const result = await fetchAPI('', {
+      method: 'POST',
+      body: JSON.stringify(c),
+    });
+    
+    return result.id;
+  } catch (error) {
+    console.error('Erro ao adicionar cupom, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    localCouponStore[c.id] = c;
+    return c.id;
+  }
 };
 
 export const getAllCoupons = async (): Promise<Coupon[]> => {
-  const db = await initDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction([STORE_NAME], 'readonly');
-    const req = tx.objectStore(STORE_NAME).getAll();
-    req.onsuccess = () => res(req.result as Coupon[]);
-    req.onerror = (e) => rej((e.target as IDBRequest).error);
-    tx.oncomplete = () => db.close();
-  });
+  try {
+    if (fallbackToIndexedDB) {
+      return Object.values(localCouponStore);
+    }
+    
+    return await fetchAPI('');
+  } catch (error) {
+    console.error('Erro ao buscar cupons, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    return Object.values(localCouponStore);
+  }
 };
 
 export const deleteCoupon = async (id: string): Promise<boolean> => {
-  const db = await initDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    tx.objectStore(STORE_NAME).delete(id);
-    tx.oncomplete = () => {
-      db.close();
-      res(true);
-    };
-    tx.onerror = (e) => rej((e.target as IDBRequest).error);
-  });
+  try {
+    if (fallbackToIndexedDB) {
+      delete localCouponStore[id];
+      return true;
+    }
+    
+    await fetchAPI(`/${id}`, {
+      method: 'DELETE',
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao deletar cupom, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    delete localCouponStore[id];
+    return true;
+  }
 };
 
 export const updateCoupon = async (c: Coupon): Promise<boolean> => {
-  const db = await initDB();
-  return new Promise((res, rej) => {
-    const tx = db.transaction([STORE_NAME], 'readwrite');
-    tx.objectStore(STORE_NAME).put(c);
-    tx.oncomplete = () => { db.close(); res(true); };
-    tx.onerror = (e) => rej((e.target as IDBRequest).error);
-  });
+  try {
+    if (fallbackToIndexedDB) {
+      localCouponStore[c.id] = c;
+      return true;
+    }
+    
+    await fetchAPI(`/${c.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(c),
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao atualizar cupom, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    localCouponStore[c.id] = c;
+    return true;
+  }
+};
+
+export const verifyCoupon = async (code: string): Promise<{ 
+  coupon: Coupon | null; 
+  isValid: boolean; 
+  reason?: string;
+}> => {
+  try {
+    if (fallbackToIndexedDB) {
+      const coupon = Object.values(localCouponStore).find(c => c.code.toLowerCase() === code.toLowerCase());
+      if (!coupon) {
+        return { coupon: null, isValid: false, reason: 'not_found' };
+      }
+      const isValid = coupon.expiresAt > Date.now() && coupon.uses < coupon.maxUses;
+      return {
+        coupon,
+        isValid,
+        reason: !isValid
+          ? coupon.expiresAt <= Date.now()
+            ? 'expirado'
+            : 'esgotado'
+          : undefined
+      };
+    }
+    
+    const result = await fetchAPI(`/verify/${code}`);
+    return result;
+  } catch (error) {
+    console.error('Erro ao verificar cupom, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    
+    const coupon = Object.values(localCouponStore).find(c => c.code.toLowerCase() === code.toLowerCase());
+    if (!coupon) {
+      return { coupon: null, isValid: false, reason: 'not_found' };
+    }
+    
+    const isValid = coupon.expiresAt > Date.now() && coupon.uses < coupon.maxUses;
+    return {
+      coupon,
+      isValid,
+      reason: !isValid
+        ? coupon.expiresAt <= Date.now()
+          ? 'expirado'
+          : 'esgotado'
+        : undefined
+    };
+  }
+};
+
+export const incrementCouponUse = async (id: string): Promise<boolean> => {
+  try {
+    if (fallbackToIndexedDB) {
+      const coupon = localCouponStore[id];
+      if (coupon) {
+        coupon.uses += 1;
+        localCouponStore[id] = coupon;
+      }
+      return true;
+    }
+    
+    await fetchAPI(`/${id}/use`, {
+      method: 'PATCH',
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao incrementar uso do cupom, usando fallback:', error);
+    fallbackToIndexedDB = true;
+    const coupon = localCouponStore[id];
+    if (coupon) {
+      coupon.uses += 1;
+      localCouponStore[id] = coupon;
+    }
+    return true;
+  }
 }; 
