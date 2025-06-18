@@ -6,12 +6,26 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  included_files = [".env", "netlify/functions/local_coupons.json"]
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
 
 [dev]
   functions = "netlify/functions"
   publish = ".next"
   framework = "#auto"
   autoLaunch = true 
+
+# Variáveis de ambiente de produção
+[context.production.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true"
+  
+# Variáveis de ambiente para todos os ambientes (dev e prod)
+[build.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true" 

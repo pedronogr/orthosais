@@ -5,72 +5,84 @@ import {
   getAllCoupons,
   addCoupon,
   deleteCoupon,
-  type Coupon
+  type Coupon,
+  getLocalCoupons
 } from '../../services/couponService';
 
 export default function CuponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loadAttempts, setLoadAttempts] = useState(0);
 
-  // Garante que o tempo entre tentativas de loading é suficiente
   const loadCoupons = useCallback(async () => {
-    if (loading) return; // Evita chamadas simultâneas
+    if (loading) return;
     
     setLoading(true);
     setError(null);
     try {
-      // Adiciona um timestamp para evitar cache
-      const timestamp = new Date().getTime();
-      console.log(`Iniciando carregamento de cupons (${timestamp}), tentativa ${loadAttempts + 1}`);
+      console.log('Iniciando carregamento de cupons...');
       
-      const cps = await getAllCoupons();
-      console.log(`Cupons carregados (${timestamp}):`, cps);
+      const cps = await Promise.race([
+        getAllCoupons(),
+        new Promise<Coupon[]>((_, reject) => {
+          setTimeout(() => reject(new Error('Timeout')), 5000);
+        })
+      ]);
+      
+      console.log('Cupons carregados:', cps);
       setCoupons(cps);
       
-      // Se não há cupons e ainda não tentamos criar o cupom padrão
-      if (cps.length === 0 && loadAttempts < 1) {
-        const defaultCoupon = {
-          id: 'BEMVINDO10',
-          code: 'BEMVINDO10',
-          type: 'percent' as const,
-          value: 10,
-          maxUses: 100,
-          uses: 0,
-          expiresAt: Date.now() + 30 * 86400000,
-          createdAt: Date.now()
-        };
-        
-        console.log("Criando cupom padrão:", defaultCoupon);
-        const result = await addCoupon(defaultCoupon);
-        console.log("Resultado da criação do cupom padrão:", result);
-        
-        // Recarrega os cupons após criar o padrão
-        const updatedCoupons = await getAllCoupons();
-        setCoupons(updatedCoupons);
-        setSuccess("Cupom padrão criado com sucesso!");
+      if (cps.length === 0) {
+        try {
+          console.log('Criando cupom padrão...');
+          const defaultCoupon = {
+            id: 'BEMVINDO10',
+            code: 'BEMVINDO10',
+            type: 'percent' as const,
+            value: 10,
+            maxUses: 100,
+            uses: 0,
+            expiresAt: Date.now() + 30 * 86400000,
+            createdAt: Date.now()
+          };
+          
+          await addCoupon(defaultCoupon);
+          const updatedCoupons = await getAllCoupons();
+          setCoupons(updatedCoupons);
+          setSuccess('Cupom padrão criado com sucesso!');
+        } catch (err) {
+          console.error('Erro ao criar cupom padrão:', err);
+          setError(`Não foi possível criar o cupom padrão: ${err instanceof Error ? err.message : 'Erro desconhecido'}`);
+        }
       }
-      
-      // Incrementa o contador de tentativas
-      setLoadAttempts(prev => prev + 1);
     } catch (e) {
       console.error('Erro ao carregar cupons:', e);
-      setError(`Não foi possível carregar os cupons: ${e instanceof Error ? e.message : 'Erro desconhecido'}`);
-      // Define uma lista vazia se houver erro
-      setCoupons([]);
+      
+      try {
+        const localData = getLocalCoupons();
+        const localCoupons = Object.values(localData) as Coupon[];
+        console.log('Usando cupons locais:', localCoupons);
+        setCoupons(localCoupons);
+        
+        if (e instanceof Error && e.message === 'Timeout') {
+          setError('Tempo limite excedido. Usando dados locais.');
+        } else {
+          setError(`Erro ao carregar cupons: ${e instanceof Error ? e.message : 'Erro desconhecido'}. Usando dados locais.`);
+        }
+      } catch (localError) {
+        console.error('Erro ao usar cupons locais:', localError);
+        setCoupons([]);
+        setError('Não foi possível carregar os cupons.');
+      }
     } finally {
       setLoading(false);
     }
-  }, [loadAttempts]);
+  }, [loading]);
 
   useEffect(() => {
-    // Carrega os cupons apenas uma vez ao montar o componente
-    if (loadAttempts === 0) {
-      loadCoupons();
-    }
-  }, [loadCoupons, loadAttempts]);
+    loadCoupons();
+  }, [loadCoupons]);
 
   const handleCreate = async () => {
     setError(null);
@@ -100,12 +112,13 @@ export default function CuponsPage() {
       };
       
       await addCoupon(c);
-      // Recarrega todos os cupons para garantir sincronização
       await loadCoupons();
       setSuccess(`Cupom ${code} criado com sucesso!`);
     } catch (e) {
       console.error('Erro ao criar cupom:', e);
       setError(`Não foi possível criar o cupom: ${e instanceof Error ? e.message : 'Erro desconhecido'}`);
+      
+      loadCoupons();
     }
   };
 
@@ -117,12 +130,13 @@ export default function CuponsPage() {
     
     try {
       await deleteCoupon(id);
-      // Recarrega todos os cupons para garantir sincronização
       await loadCoupons();
       setSuccess(`Cupom excluído com sucesso!`);
     } catch (e) {
       console.error('Erro ao excluir cupom:', e);
       setError(`Não foi possível excluir o cupom: ${e instanceof Error ? e.message : 'Erro desconhecido'}`);
+      
+      loadCoupons();
     }
   };
 

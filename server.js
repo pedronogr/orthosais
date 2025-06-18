@@ -1,6 +1,14 @@
+// Carregar variáveis de ambiente do arquivo .env
+require('dotenv').config();
+
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
+
+// Mostrar informações de ambiente para debugging
+console.log('Variáveis de ambiente carregadas:');
+console.log('- NODE_ENV:', process.env.NODE_ENV);
+console.log('- MongoDB configurado:', !!process.env.MONGODB_URI);
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
