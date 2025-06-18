@@ -201,8 +201,15 @@ button.bg-primary.hover\:bg-primary-hover:hover {
 a.bg-white.border-primary:hover,
 button.bg-white.border-primary:hover {
   background-color: white !important;
-  color: var(--primary) !important;
+  color: var(--primary) !important; 
   border-color: var(--primary) !important;
+  opacity: 1 !important;
+  text-decoration: none !important;
+}
+
+/* Garantir que links e botões não fiquem transparentes no hover */
+a:hover, button:hover {
+  opacity: 1 !important;
 }
 
 a.border-primary.text-primary:hover {

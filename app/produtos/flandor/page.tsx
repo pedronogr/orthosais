@@ -137,12 +137,15 @@ export default function FlandorPage() {
               
               <a
                 href="#informacoes"
-                className="inline-block text-center bg-white border border-primary text-primary font-medium py-3 px-8 rounded-md transition-all duration-300"
+                className="inline-block text-center bg-white border border-primary font-medium py-3 px-8 rounded-md transition-all duration-300"
                 style={{ 
                   backgroundColor: 'white',
                   color: 'var(--primary)',
-                  borderColor: 'var(--primary)'
+                  borderColor: 'var(--primary)',
+                  textDecoration: 'none'
                 }}
+                onMouseOver={(e) => {e.currentTarget.style.color = 'var(--primary)'}}
+                onMouseOut={(e) => {e.currentTarget.style.color = 'var(--primary)'}}
               >
                 Ver mais informações
               </a>
