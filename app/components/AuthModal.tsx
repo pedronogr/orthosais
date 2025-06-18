@@ -74,7 +74,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setEmail('');
         setPassword('');
         setConfirmPassword('');
-        setSuccessMessage('Cadastro realizado com sucesso! Por favor, use as credenciais de teste para fazer login.');
+        setSuccessMessage('IMPORTANTE: Este é um sistema de demonstração. Por favor, use APENAS as credenciais de teste abaixo para fazer login. Os dados que você acabou de cadastrar não são armazenados.');
         setActiveTab('login');
       } else {
         setError('Este email já está cadastrado ou não foi possível criar a conta');
@@ -186,9 +186,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
               
               <div className="mt-6 p-3 bg-blue-50 text-blue-700 text-xs rounded-md">
-                <p className="font-semibold mb-1">Credenciais para teste:</p>
-                <p>Admin: pedro@admin.com / admin123</p>
-                <p>Cliente: cliente@teste.com / cliente123</p>
+                <p className="font-semibold mb-1 text-center text-sm">⚠️ ATENÇÃO: USE ESTAS CREDENCIAIS ⚠️</p>
+                <div className="border border-blue-200 rounded p-2 mb-2 bg-white">
+                  <p className="font-bold">Admin:</p>
+                  <p>Email: pedro@admin.com</p>
+                  <p>Senha: admin123</p>
+                </div>
+                <div className="border border-blue-200 rounded p-2 bg-white">
+                  <p className="font-bold">Cliente:</p>
+                  <p>Email: cliente@teste.com</p>
+                  <p>Senha: cliente123</p>
+                </div>
+                <p className="mt-2 text-center">Este é um sistema de demonstração. Novos registros não são armazenados.</p>
               </div>
             </form>
           ) : (
