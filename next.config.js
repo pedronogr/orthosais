@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-module.exports = {
+const nextConfig = {
   images: {
     domains: [
       'pt.farmagranada.com',
@@ -13,6 +13,11 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   typescript: {
+    // Ignora erros do TypeScript durante o build
     ignoreBuildErrors: true,
+    tsconfigPath: './tsconfig.json',
   },
-}
+  swcMinify: true, // Utiliza SWC para minificação (mais rápido)
+};
+
+module.exports = nextConfig;
