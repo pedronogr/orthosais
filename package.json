@@ -7,8 +7,7 @@
     "build": "next build --no-lint",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "npm install --save-dev typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11 --no-save"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",

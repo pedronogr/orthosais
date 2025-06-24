@@ -1,12 +1,9 @@
 [build]
-  command = "npm ci && npm install --save-dev typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11 && node setup-typescript.js && node netlify.js && npm run build"
+  command = "npm cache clean --force && npm ci --prefer-offline=false && npm install --save-exact --no-package-lock typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11 && node setup-typescript.js && node netlify.js && npm run build"
   publish = ".next"
   functions = "netlify/functions"
   
-# Ativa o deploy automático e configurações de cache
-[build.processing]
-  skip_processing = false
-
+# Configurações específicas de build
 [build.environment]
   NODE_ENV = "production"
   USE_LOCAL_DB = "true"
@@ -14,6 +11,13 @@
   NEXT_TELEMETRY_DISABLED = "1"
   NODE_OPTIONS = "--max-old-space-size=4096"
   CI = "false"
+  # Desabilitar uso de cache do npm para evitar problemas
+  NPM_CONFIG_CACHE = "/opt/build/cache/npm"
+  NPM_CONFIG_PREFER_OFFLINE = "false"
+
+# Ativa o deploy automático e configurações de cache
+[build.processing]
+  skip_processing = false
 
 [functions]
   directory = "netlify/functions"
