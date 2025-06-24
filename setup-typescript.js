@@ -20,9 +20,9 @@ try {
   
   // Verificar e atualizar dependências
   packageJson.devDependencies = packageJson.devDependencies || {};
-  packageJson.devDependencies.typescript = packageJson.devDependencies.typescript || "5.8.3";
-  packageJson.devDependencies["@types/react"] = packageJson.devDependencies["@types/react"] || "18.2.0";
-  packageJson.devDependencies["@types/react-dom"] = packageJson.devDependencies["@types/react-dom"] || "18.2.0";
+  packageJson.devDependencies.typescript = packageJson.devDependencies.typescript || "5.0.4";
+  packageJson.devDependencies["@types/react"] = packageJson.devDependencies["@types/react"] || "18.0.38";
+  packageJson.devDependencies["@types/react-dom"] = packageJson.devDependencies["@types/react-dom"] || "18.0.11";
   
   // Salvar package.json atualizado
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
@@ -30,7 +30,7 @@ try {
   
   // Instalar dependências TypeScript localmente sem mexer no package.json
   console.log('📦 Instalando dependências TypeScript localmente...');
-  execSync('npm install --no-save typescript@5.8.3 @types/react@18.2.0 @types/react-dom@18.2.0', { stdio: 'inherit' });
+  execSync('npm install --no-save typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11', { stdio: 'inherit' });
   
   // Verificar se os módulos foram instalados
   const typescriptPath = path.join(__dirname, 'node_modules', 'typescript');

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "postinstall": "npm install --save-dev typescript@5.8.3 @types/react@18.2.0 @types/react-dom@18.2.0 --no-save --force"
+    "postinstall": "npm install --save-dev typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11 --no-save"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.0",
@@ -27,10 +27,11 @@
     "@eslint/eslintrc": "^3",
     "@netlify/plugin-nextjs": "^5.11.3",
     "@types/node": "^20.19.1",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "18.0.38",
+    "@types/react-dom": "18.0.11",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "typescript": "^5.8.3"
+    "netlify-plugin-cache-nextjs": "1.6.1",
+    "typescript": "5.0.4"
   }
 }
