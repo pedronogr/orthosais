@@ -1,5 +1,5 @@
 [build]
-  command = "node setup-typescript.js && node netlify.js && CI=false DISABLE_TYPESCRIPT_CHECKS=true npm run build"
+  command = "npm install --force typescript@5.8.3 @types/react@18.2.0 @types/react-dom@18.2.0 && node setup-typescript.js && node netlify.js && CI=false DISABLE_TYPESCRIPT_CHECKS=true npm run build"
   publish = ".next"
   functions = "netlify/functions"
   
