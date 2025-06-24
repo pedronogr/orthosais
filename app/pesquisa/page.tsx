@@ -27,15 +27,10 @@ export default function PesquisaPage() {
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-primary mb-6">Nossa Abordagem</h2>
             <p className="text-lg mb-8">
-              Na Orthosais Farma, acreditamos que a pesquisa e a inovação são fundamentais para 
-              o desenvolvimento de produtos farmacêuticos que realmente façam a diferença na vida 
-              das pessoas. Nossa equipe técnica trabalha constantemente para criar soluções que 
-              atendam às necessidades específicas da população brasileira.
+              Na Orthosais Farma, acreditamos que a pesquisa e a inovação são os pilares para o desenvolvimento de soluções farmacêuticas eficazes, seguras e relevantes. Nossa equipe técnica atua de forma contínua para criar produtos que atendem às necessidades reais da população brasileira, com base em ciência, qualidade e responsabilidade.
             </p>
             <p className="text-lg mb-8">
-              Investimos continuamente em tecnologia e capacitação, buscando sempre estar na 
-              vanguarda do setor farmacêutico e oferecer produtos de extrema qualidade, 
-              seguros e eficazes.
+              Investimos de forma permanente em tecnologia, capacitação e metodologias modernas, buscando sempre estar na vanguarda do setor farmacêutico. O nosso compromisso é entregar resultados concretos, com excelência em cada etapa — da pesquisa ao consumidor final.
             </p>
           </div>
         </div>
