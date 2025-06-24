@@ -1,5 +1,5 @@
 [build]
-  command = "node netlify.js && CI=false DISABLE_TYPESCRIPT_CHECKS=true npm run build"
+  command = "node netlify.js && npm install --save-dev typescript @types/react && CI=false DISABLE_TYPESCRIPT_CHECKS=true npm run build"
   publish = ".next"
   functions = "netlify/functions"
   
