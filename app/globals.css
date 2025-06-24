@@ -5,8 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary: #e53e3e; /* Vermelho */
-  --primary-hover: #c53030; /* Vermelho escuro */
+  --primary: #ed8936; /* Laranja */
+  --primary-hover: #dd6b20; /* Laranja escuro */
   --secondary: #ed8936; /* Laranja */
   --secondary-hover: #dd6b20; /* Laranja escuro */
   --accent: #f6ad55; /* Laranja claro */
