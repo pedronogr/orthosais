@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/runtime": "^7.27.6",
     "@supabase/supabase-js": "^2.50.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.10.0",
