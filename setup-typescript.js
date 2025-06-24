@@ -4,77 +4,73 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Verificando setup do TypeScript...');
-
-// Verificando se o arquivo existe
-const tsConfigPath = path.join(__dirname, 'tsconfig.json');
-if (!fs.existsSync(tsConfigPath)) {
-  console.log('❌ tsconfig.json não encontrado. Criando arquivo básico...');
-  const basicTsConfig = {
-    "compilerOptions": {
-      "target": "es5",
-      "lib": ["dom", "dom.iterable", "esnext"],
-      "allowJs": true,
-      "skipLibCheck": true,
-      "strict": true,
-      "forceConsistentCasingInFileNames": true,
-      "noEmit": true,
-      "esModuleInterop": true,
-      "module": "esnext", 
-      "moduleResolution": "node",
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "jsx": "preserve",
-      "incremental": true,
-      "paths": {
-        "@/*": ["./*"]
-      }
-    },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-    "exclude": ["node_modules"]
-  };
-  fs.writeFileSync(tsConfigPath, JSON.stringify(basicTsConfig, null, 2));
-  console.log('✅ tsconfig.json criado com sucesso.');
-}
-
-// Garantir que as dependências TypeScript estejam instaladas globalmente e localmente
-console.log('📦 Instalando dependências do TypeScript...');
+console.log('🔍 Iniciando configuração do TypeScript para Netlify...');
 
 try {
-  console.log('Instalando typescript globalmente...');
-  execSync('npm install -g typescript@5.8.3 --force', { stdio: 'inherit' });
+  // Verificar versão do Node e NPM
+  console.log('📊 Ambiente de execução:');
+  console.log(`Node.js: ${process.version}`);
+  const npmVersion = execSync('npm --version').toString().trim();
+  console.log(`NPM: ${npmVersion}`);
+
+  // Garantir que as dependências TypeScript estejam no package.json
+  console.log('📦 Verificando package.json...');
+  const packageJsonPath = path.join(__dirname, 'package.json');
+  const packageJson = require(packageJsonPath);
   
-  console.log('Instalando dependências TypeScript no projeto...');
-  execSync('npm install --save-dev --force typescript@5.8.3 @types/react@18.2.0 @types/react-dom@18.2.0', { stdio: 'inherit' });
+  // Verificar e atualizar dependências
+  packageJson.devDependencies = packageJson.devDependencies || {};
+  packageJson.devDependencies.typescript = packageJson.devDependencies.typescript || "5.8.3";
+  packageJson.devDependencies["@types/react"] = packageJson.devDependencies["@types/react"] || "18.2.0";
+  packageJson.devDependencies["@types/react-dom"] = packageJson.devDependencies["@types/react-dom"] || "18.2.0";
   
-  // Verificar se os módulos foram instalados corretamente
-  console.log('Verificando se os módulos foram instalados corretamente...');
+  // Salvar package.json atualizado
+  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+  console.log('✅ package.json atualizado com sucesso!');
   
-  const nodeModulesPath = path.join(__dirname, 'node_modules', 'typescript');
-  if (!fs.existsSync(nodeModulesPath)) {
-    console.log('❌ TypeScript não encontrado em node_modules. Tentando novamente com npm ci...');
-    execSync('npm ci', { stdio: 'inherit' });
+  // Instalar dependências TypeScript localmente sem mexer no package.json
+  console.log('📦 Instalando dependências TypeScript localmente...');
+  execSync('npm install --no-save typescript@5.8.3 @types/react@18.2.0 @types/react-dom@18.2.0', { stdio: 'inherit' });
+  
+  // Verificar se os módulos foram instalados
+  const typescriptPath = path.join(__dirname, 'node_modules', 'typescript');
+  if (fs.existsSync(typescriptPath)) {
+    console.log('✅ TypeScript instalado com sucesso em node_modules!');
+  } else {
+    console.log('⚠️ TypeScript não encontrado em node_modules. Criando link simbólico global...');
+    execSync('npm link typescript', { stdio: 'inherit' });
   }
   
-  console.log('✅ Dependências TypeScript instaladas com sucesso.');
-} catch (error) {
-  console.error('❌ Erro ao instalar dependências TypeScript:', error);
-  // Não sair com código de erro, tentar continuar o build mesmo assim
-  console.log('⚠️ Continuando o build apesar do erro...');
-}
-
-// Verificar versões instaladas
-try {
-  const tscVersion = execSync('npx tsc --version').toString().trim();
-  console.log(`✅ TypeScript versão: ${tscVersion}`);
+  // Criar ou verificar tsconfig.json básico
+  console.log('🛠️ Verificando tsconfig.json...');
+  const tsConfigPath = path.join(__dirname, 'tsconfig.json');
+  if (!fs.existsSync(tsConfigPath)) {
+    console.log('⚠️ tsconfig.json não encontrado. Criando arquivo básico...');
+    execSync('npx tsc --init --jsx react', { stdio: 'inherit' });
+  } else {
+    console.log('✅ tsconfig.json já existe.');
+  }
   
-  const packageJson = require('./package.json');
-  console.log('✅ Dependências no package.json:');
-  console.log(`- typescript: ${packageJson.devDependencies.typescript}`);
-  console.log(`- @types/react: ${packageJson.devDependencies['@types/react']}`);
-  console.log(`- @types/react-dom: ${packageJson.devDependencies['@types/react-dom']}`);
-} catch (error) {
-  console.warn('⚠️ Não foi possível verificar todas as versões:', error.message);
-}
+  // Criar next-env.d.ts se não existir
+  console.log('🛠️ Verificando next-env.d.ts...');
+  const nextEnvPath = path.join(__dirname, 'next-env.d.ts');
+  if (!fs.existsSync(nextEnvPath)) {
+    console.log('⚠️ next-env.d.ts não encontrado. Criando arquivo...');
+    const nextEnvContent = `/// <reference types="next" />
+/// <reference types="next/image-types/global" />
 
-console.log('✅ Configuração do TypeScript concluída!'); 
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.`;
+    fs.writeFileSync(nextEnvPath, nextEnvContent);
+    console.log('✅ next-env.d.ts criado com sucesso!');
+  } else {
+    console.log('✅ next-env.d.ts já existe.');
+  }
+  
+  console.log('✅ Configuração do TypeScript concluída com sucesso!');
+
+} catch (error) {
+  console.error('❌ Erro durante a configuração do TypeScript:', error);
+  console.log('⚠️ Continuando o build apesar do erro...');
+  // Não encerrar o processo com erro
+} 
