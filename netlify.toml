@@ -14,6 +14,8 @@
   # Desabilitar uso de cache do npm para evitar problemas
   NPM_CONFIG_CACHE = "/opt/build/cache/npm"
   NPM_CONFIG_PREFER_OFFLINE = "false"
+  # Especificar versão do Node.js explicitamente
+  NODE_VERSION = "18.18.0"
 
 # Ativa o deploy automático e configurações de cache
 [build.processing]
