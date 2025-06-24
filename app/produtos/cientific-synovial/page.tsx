@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata = {
@@ -7,9 +8,9 @@ export const metadata = {
 
 export default function CientificSynovialPage() {
   return (
-    <div className="bg-sky-50 text-gray-800 leading-relaxed antialiased">
+    <div className="bg-background text-foreground leading-relaxed antialiased">
       {/* Header */}
-      <header className="bg-sky-700 text-white py-6 shadow-md">
+      <header className="bg-primary text-white py-6 shadow-md">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
           <h1 className="text-3xl font-bold tracking-wide">
             Cientific Synovial<sup className="align-super text-sm">®</sup>
@@ -20,9 +21,11 @@ export default function CientificSynovialPage() {
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-10 flex flex-col md:flex-row items-center gap-8">
-        <img
-          src="https://via.placeholder.com/400x450?text=Cientific+Synovial"
+        <Image
+          src="/images/cientificsy.png"
           alt="Frasco de Cientific Synovial"
+          width={400}
+          height={450}
           className="w-80 rounded-2xl shadow-lg"
         />
         <div>
@@ -35,7 +38,7 @@ export default function CientificSynovialPage() {
           </ul>
           <Link
             href="#informacoes"
-            className="inline-block mt-6 bg-sky-700 hover:bg-sky-800 text-white font-medium py-3 px-8 rounded-full transition"
+            className="inline-block mt-6 bg-primary hover:bg-primary-hover text-white font-medium py-3 px-8 rounded-full transition"
           >
             Quero comprar
           </Link>
@@ -43,7 +46,7 @@ export default function CientificSynovialPage() {
       </section>
 
       {/* Information Sections */}
-      <section id="informacoes" className="bg-white py-10">
+      <section id="informacoes" className="bg-background py-10">
         <div className="container mx-auto px-4 space-y-8">
           {/* Composição */}
           <div>
@@ -109,7 +112,7 @@ export default function CientificSynovialPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-sky-700 text-white py-6">
+      <footer className="bg-primary text-white py-6">
         <div className="container mx-auto px-4 text-sm text-center space-y-2">
           <p>© 2025 Orthovita Suplementos. Todos os direitos reservados.</p>
           <p>*Suplemento alimentar isento de registro conforme RDC 240/2018.</p>
