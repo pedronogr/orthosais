@@ -1,71 +1,78 @@
 import Image from 'next/image';
 
-const certifications = [
-  {
-    name: 'ANVISA',
-    image: '/images/anvisa.png',
-    description: 'Registrado na ANVISA',
-    delay: 'delay-0'
-  },
-  {
-    name: 'ISO',
-    image: '/images/iso9001.png',
-    description: 'ISO 9001',
-    delay: 'delay-100'
-  },
-  {
-    name: 'BPF',
-    image: '/images/bpf.png',
-    description: 'Boas Práticas de Fabricação',
-    delay: 'delay-200'
-  },
-  {
-    name: 'Ministério da Saúde',
-    image: '/images/ministsaude.png',
-    description: 'Ministério da Saúde',
-    delay: 'delay-300'
-  },
-  {
-    name: 'ABNT',
-    image: '/images/abnt.png',
-    description: 'ABNT NBR',
-    delay: 'delay-400'
-  }
-];
+interface CertificationsSectionProps {
+  title?: string;
+  description?: string;
+}
 
-export default function CertificationsSection() {
+export default function CertificationsSection({
+  title = "Certificações e Garantias",
+  description = "Nossos produtos atendem aos mais rigorosos padrões de qualidade"
+}: CertificationsSectionProps) {
+  const certifications = [
+    {
+      name: "Anvisa",
+      image: "/images/anvisa.png",
+      description: "Registro na Agência Nacional de Vigilância Sanitária"
+    },
+    {
+      name: "BPF",
+      image: "/images/bpf.png",
+      description: "Boas Práticas de Fabricação"
+    },
+    {
+      name: "ISO 9001",
+      image: "/images/iso9001.png",
+      description: "Certificação internacional de gestão de qualidade"
+    },
+    {
+      name: "ABNT",
+      image: "/images/abnt.png",
+      description: "Conformidade com normas técnicas brasileiras"
+    },
+    {
+      name: "Ministério da Saúde",
+      image: "/images/ministsaude.png",
+      description: "Aprovado pelo Ministério da Saúde"
+    }
+  ];
+
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-primary mb-3">CERTIFICAÇÕES E RECONHECIMENTOS</h2>
-          <p className="text-lg text-secondary font-medium">Qualidade e conformidade garantidas</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{title}</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
           {certifications.map((cert, index) => (
-            <div 
+            <div
               key={index}
-              className={`flex flex-col items-center animate-fade-in ${cert.delay}`}
+              className="group flex flex-col items-center"
             >
-              <div className="bg-white p-4 rounded-xl shadow-lg mb-3 transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center justify-center h-28 w-40">
-                <Image 
-                  src={cert.image} 
-                  alt={cert.name} 
-                  width={120}
-                  height={60}
-                  className="h-auto max-h-20 w-auto opacity-90 hover:opacity-100 transition-opacity duration-300"
+              <div className="relative w-24 h-24 md:w-28 md:h-28 mb-3 grayscale hover:grayscale-0 transition-all duration-300">
+                <Image
+                  src={cert.image}
+                  alt={`Certificação ${cert.name}`}
+                  fill
+                  className="object-contain"
                 />
               </div>
-              <p className="text-sm text-gray-600 font-medium text-center">{cert.description}</p>
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-amber-50 p-2 rounded-md text-center mt-2 absolute translate-y-24">
+                <p className="text-sm font-medium text-amber-800">{cert.name}</p>
+                <p className="text-xs text-amber-700">{cert.description}</p>
+              </div>
             </div>
           ))}
         </div>
-        
-        <div className="text-center mt-12">
-          <p className="text-base text-gray-600 max-w-2xl mx-auto">
-            Todas as nossas operações e produtos atendem aos mais rigorosos padrões de qualidade e segurança nacionais e internacionais.
-          </p>
+
+        <div className="mt-16 text-center">
+          <div className="inline-block bg-amber-50 px-6 py-4 rounded-lg border border-amber-100">
+            <p className="text-amber-800 font-medium">
+              Todos os nossos produtos são desenvolvidos seguindo rigorosos padrões de qualidade e segurança.
+            </p>
+          </div>
         </div>
       </div>
     </section>
