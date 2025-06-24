@@ -1,44 +1,31 @@
 [build]
-  command = "node install-typescript.js && npm install && node setup-typescript.js && node netlify.js && SKIP_TYPESCRIPT=1 npm run build"
+  command = "npm install && npm run build"
   publish = ".next"
   functions = "netlify/functions"
-  
-# Configurações específicas de build
-[build.environment]
-  NODE_ENV = "production"
-  USE_LOCAL_DB = "true"
-  # Configuração específica para Typescript e Next.js
-  NEXT_TELEMETRY_DISABLED = "1"
-  NODE_OPTIONS = "--max-old-space-size=4096"
-  CI = "false"
-  # Desabilitar uso de cache do npm para evitar problemas
-  NPM_CONFIG_CACHE = "/opt/build/cache/npm"
-  NPM_CONFIG_PREFER_OFFLINE = "false"
-  # Especificar versão do Node.js explicitamente
-  NODE_VERSION = "18.18.0"
-
-# Ativa o deploy automático e configurações de cache
-[build.processing]
-  skip_processing = false
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
   included_files = [".env", "netlify/functions/local_coupons.json"]
 
-# Plugin do Next.js com configurações simplificadas
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
-[context.production.environment]
-  NODE_ENV = "production"
-  USE_LOCAL_DB = "true"
-
 [dev]
   functions = "netlify/functions"
   publish = ".next"
   framework = "#auto"
   autoLaunch = true 
+
+# Variáveis de ambiente de produção
+[context.production.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true"
+  
+# Variáveis de ambiente para todos os ambientes (dev e prod)
+[build.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true" 

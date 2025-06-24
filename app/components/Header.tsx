@@ -7,9 +7,13 @@ import HeaderActions from './HeaderActions';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [productSubmenuOpen, setProductSubmenuOpen] = useState(false);
+  const [aboutSubmenuOpen, setAboutSubmenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   
+  const productSubmenuRef = useRef<HTMLDivElement>(null);
+  const aboutSubmenuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
   // Detecta o scroll para alterar a aparência do header
@@ -23,9 +27,15 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fecha a busca quando clicado fora dela
+  // Fecha os dropdowns quando clicado fora deles
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      if (productSubmenuRef.current && !productSubmenuRef.current.contains(event.target as Node)) {
+        setProductSubmenuOpen(false);
+      }
+      if (aboutSubmenuRef.current && !aboutSubmenuRef.current.contains(event.target as Node)) {
+        setAboutSubmenuOpen(false);
+      }
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setSearchOpen(false);
       }
@@ -109,11 +119,56 @@ export default function Header() {
             <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-600">
               <Link href="/" className="nav-link py-2 transition-colors">Início</Link>
               
-              {/* Sobre Link */}
-              <Link href="/sobre" className="nav-link py-2 transition-colors">Sobre</Link>
+              {/* Sobre Nós Dropdown */}
+              <div className="relative" ref={aboutSubmenuRef}>
+                <button 
+                  className="flex items-center nav-link py-2 transition-colors"
+                  onClick={() => {
+                    setAboutSubmenuOpen(!aboutSubmenuOpen);
+                    setProductSubmenuOpen(false);
+                  }}
+                >
+                  Sobre Nós
+                  <svg className={`ml-1 w-4 h-4 transition-transform duration-300 ${aboutSubmenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {aboutSubmenuOpen && (
+                  <div className="absolute top-full left-0 w-56 mt-1 bg-white rounded-lg shadow-lg py-2 z-20 animate-slide-in">
+                    <Link href="/sobre" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Nossa História</Link>
+                    <Link href="/sobre/missao-visao-valores" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Missão, Visão e Valores</Link>
+                    <Link href="/sobre/equipe" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Nossa Equipe</Link>
+                    <Link href="/sobre/responsabilidade-social" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Responsabilidade Social</Link>
+                  </div>
+                )}
+              </div>
               
-              {/* Produtos Link */}
-              <Link href="/produtos" className="nav-link py-2 transition-colors">Produtos</Link>
+              {/* Produtos Dropdown */}
+              <div className="relative" ref={productSubmenuRef}>
+                <button 
+                  className="flex items-center nav-link py-2 transition-colors"
+                  onClick={() => {
+                    setProductSubmenuOpen(!productSubmenuOpen);
+                    setAboutSubmenuOpen(false);
+                  }}
+                >
+                  Produtos
+                  <svg className={`ml-1 w-4 h-4 transition-transform duration-300 ${productSubmenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {productSubmenuOpen && (
+                  <div className="absolute top-full left-0 w-56 mt-1 bg-white rounded-lg shadow-lg py-2 z-20 animate-slide-in">
+                    <Link href="/produtos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Todos os Produtos</Link>
+                    <Link href="/produtos/linha-protecao" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Linha Proteção</Link>
+                    <Link href="/produtos/linha-vida" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Linha Vida</Link>
+                    <Link href="/produtos/linha-saude" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Linha Saúde</Link>
+                    <Link href="/produtos/linha-especializada" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors">Linha Especializada</Link>
+                  </div>
+                )}
+              </div>
               
               <Link href="/pesquisa" className="nav-link py-2 transition-colors">Pesquisa e Inovação</Link>
               <Link href="/contato" className="nav-link py-2 transition-colors">Contato</Link>
@@ -223,13 +278,70 @@ export default function Header() {
                 Início
               </Link>
               
-              <Link href="/sobre" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
-                Sobre
-              </Link>
+              <div className="relative">
+                <button 
+                  className="w-full text-left px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors"
+                  onClick={() => setAboutSubmenuOpen(!aboutSubmenuOpen)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>Sobre Nós</span>
+                    <svg className={`ml-1 w-4 h-4 transition-transform duration-300 ${aboutSubmenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                  </div>
+                </button>
+                
+                {aboutSubmenuOpen && (
+                  <div className="pl-4 space-y-1 animate-slide-in">
+                    <Link href="/sobre" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Nossa História
+                    </Link>
+                    <Link href="/sobre/missao-visao-valores" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Missão, Visão e Valores
+                    </Link>
+                    <Link href="/sobre/equipe" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Nossa Equipe
+                    </Link>
+                    <Link href="/sobre/responsabilidade-social" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Responsabilidade Social
+                    </Link>
+                  </div>
+                )}
+              </div>
               
-              <Link href="/produtos" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
-                Produtos
-              </Link>
+              <div className="relative">
+                <button 
+                  className="w-full text-left px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors"
+                  onClick={() => setProductSubmenuOpen(!productSubmenuOpen)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>Produtos</span>
+                    <svg className={`ml-1 w-4 h-4 transition-transform duration-300 ${productSubmenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                  </div>
+                </button>
+                
+                {productSubmenuOpen && (
+                  <div className="pl-4 space-y-1 animate-slide-in">
+                    <Link href="/produtos" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Todos os Produtos
+                    </Link>
+                    <Link href="/produtos/linha-protecao" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Linha Proteção
+                    </Link>
+                    <Link href="/produtos/linha-vida" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Linha Vida
+                    </Link>
+                    <Link href="/produtos/linha-saude" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Linha Saúde
+                    </Link>
+                    <Link href="/produtos/linha-especializada" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors">
+                      Linha Especializada
+                    </Link>
+                  </div>
+                )}
+              </div>
               
               <Link href="/pesquisa" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
                 Pesquisa e Inovação
