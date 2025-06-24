@@ -46,7 +46,7 @@ const nextConfig = {
           loader: 'babel-loader',
           options: {
             presets: ['next/babel'],
-            plugins: [],
+            plugins: [['@babel/plugin-transform-runtime', { regenerator: true }]],
           },
         },
       ],
