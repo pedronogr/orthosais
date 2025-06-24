@@ -3,33 +3,45 @@
   publish = ".next"
   functions = "netlify/functions"
   
-# Ativa o deploy automático
+# Ativa o deploy automático e configurações de cache
 [build.processing]
   skip_processing = false
+
+[build.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true"
+  # Configuração específica para Typescript e Next.js
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_OPTIONS = "--max-old-space-size=4096"
+  CI = "false"
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
   included_files = [".env", "netlify/functions/local_coupons.json"]
 
+# Plugin do Next.js com configurações avançadas de cache
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+  [plugins.inputs]
+    cacheDir = ".next/cache"
+    debug = true
+    # Configurações de cache mais detalhadas
+    enableCache = true
+    # Incluir tipos
+    includeFiles = ["**/*.ts", "**/*.tsx"]
+    # Ignorar TypeScript durante o build
+    typescriptCompilerOptions = { "noEmit" = true }
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
+
+[context.production.environment]
+  NODE_ENV = "production"
+  USE_LOCAL_DB = "true"
 
 [dev]
   functions = "netlify/functions"
   publish = ".next"
   framework = "#auto"
   autoLaunch = true 
-
-# Variáveis de ambiente de produção
-[context.production.environment]
-  NODE_ENV = "production"
-  USE_LOCAL_DB = "true"
-  
-# Variáveis de ambiente para todos os ambientes (dev e prod)
-[build.environment]
-  NODE_ENV = "production"
-  USE_LOCAL_DB = "true" 
