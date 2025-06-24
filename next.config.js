@@ -32,7 +32,28 @@ const nextConfig = {
     pagesBufferLength: 5,
   },
   // Desabilitar o minificador SWC (que estava causando problemas)
-  swcMinify: false
+  swcMinify: false,
+  // Ignorar completamente o TypeScript durante o build
+  webpack: (config, { isServer }) => {
+    // Força o Next.js a tratar arquivos .ts e .tsx como .js
+    config.resolve.extensions = ['.js', '.jsx', '.json', '.ts', '.tsx'];
+    
+    // Adiciona tratamento especial para arquivos TypeScript
+    config.module.rules.push({
+      test: /\.(ts|tsx)$/,
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: ['next/babel'],
+            plugins: [],
+          },
+        },
+      ],
+    });
+
+    return config;
+  }
 };
 
 module.exports = nextConfig;

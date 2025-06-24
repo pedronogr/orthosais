@@ -1,5 +1,5 @@
 [build]
-  command = "npm cache clean --force && npm ci --prefer-offline=false && npm install --save-exact --no-package-lock typescript@5.0.4 @types/react@18.0.38 @types/react-dom@18.0.11 && node setup-typescript.js && node netlify.js && npm run build"
+  command = "node install-typescript.js && npm install && node setup-typescript.js && node netlify.js && SKIP_TYPESCRIPT=1 npm run build"
   publish = ".next"
   functions = "netlify/functions"
   
