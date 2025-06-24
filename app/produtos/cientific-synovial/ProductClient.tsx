@@ -8,7 +8,6 @@ import GuaranteeBanner from '../../components/GuaranteeBanner';
 import ProductSafety from '../../components/ProductSafety';
 import ProductFAQ from '../../components/ProductFAQ';
 import RelatedProducts from '../../components/RelatedProducts';
-import TestimonialsSection from '../../components/TestimonialsSection';
 import CertificationsSection from '../../components/CertificationsSection';
 import { useAppContext } from '../../context/AppContext';
 
@@ -73,7 +72,7 @@ export default function ProductClient() {
       "@type": "Offer",
       "url": "https://www.orthosais.com.br/produtos/cientific-synovial",
       "priceCurrency": "BRL",
-      "price": "129.90",
+      "price": "2499.90",
       "priceValidUntil": "2024-12-31",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition"
@@ -140,7 +139,7 @@ export default function ProductClient() {
             
             <div className="mb-4">
               <span className="text-3xl font-bold text-amber-600">
-                R$ 129,90
+                R$ 2.499,90
               </span>
               <span className="text-gray-500 text-sm ml-2">
                 Frasco com 60 cápsulas
@@ -306,9 +305,6 @@ export default function ProductClient() {
         title="Certificações e Garantias"
         description="O Cientific Synovial é produzido seguindo os mais rigorosos padrões de qualidade"
       />
-
-      {/* Testemunhos */}
-      <TestimonialsSection />
 
       {/* Segurança do Produto */}
       <ProductSafety safetyInfo={safetyInfo} />
