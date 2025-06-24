@@ -16,8 +16,7 @@ const nextConfig = {
     // Ignora erros do TypeScript durante o build
     ignoreBuildErrors: true,
     tsconfigPath: './tsconfig.json',
-  },
-  swcMinify: true, // Utiliza SWC para minificação (mais rápido)
+  }
 };
 
 module.exports = nextConfig;
