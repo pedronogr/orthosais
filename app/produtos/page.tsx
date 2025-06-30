@@ -35,42 +35,48 @@ function ProdutosContent() {
       name: "VISCOMOVE",
       price: 159.90,
       imageSrc: "/images/viscomove.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Suplemento articular para saúde das articulações."
     },
     {
       id: "flandor",
       name: "FLANDOR 500mg",
       price: 159.90,
       imageSrc: "/images/flandor.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Anti-inflamatório para alívio da dor e tratamento de inflamações."
     },
     {
       id: "cientific-synovial",
       name: "CIENTIFIC SYNOVIAL",
       price: 2499.90,
       imageSrc: "/images/cientificsy.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Viscossuplementação para tratamento da osteoartrite."
     },
     {
       id: "viscolive-ss",
       name: "VISCOLIVE SS",
       price: 189.99,
       imageSrc: "/images/viscolivess.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Suplemento articular para saúde das articulações."
     },
     {
       id: "ortrical",
       name: "ORTRICAL",
       price: 52.90,
       imageSrc: "/images/ortrical.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Suplemento de cálcio para saúde óssea."
     },
     {
       id: "allmag",
       name: "ALLMAG",
       price: 86.49,
       imageSrc: "/images/allmag.png",
-      category: "Linha Vida"
+      category: "Linha Vida",
+      description: "Suplemento de magnésio para saúde muscular e cardiovascular."
     }
   ];
 
@@ -105,7 +111,7 @@ function ProdutosContent() {
   }, []);
 
   // Categorias únicas
-  const categories = [...new Set(products.map(product => product.category))];
+  const categories = Array.from(new Set(products.map(product => product.category)));
   
   // Filtragem de produtos
   const filteredProducts = products.filter(product => {
