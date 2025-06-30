@@ -32,6 +32,7 @@ interface AppContextType {
   addToCart: (product: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  updateCartItemQuantity: (productId: string, quantity: number) => void; // Alias para updateQuantity
   clearCart: () => void;
   cartTotal: number;
   cartItemsCount: number;
@@ -420,6 +421,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     addToCart,
     removeFromCart,
     updateQuantity,
+    updateCartItemQuantity: updateQuantity, // Alias para updateQuantity
     clearCart,
     cartTotal,
     cartItemsCount,

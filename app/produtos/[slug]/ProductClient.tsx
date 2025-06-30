@@ -14,6 +14,7 @@ import PromotionBanner from '../../components/PromotionBanner';
 import GuaranteeBanner from '../../components/GuaranteeBanner';
 import BenefitsBanner from '../../components/BenefitsBanner';
 import TestimonialsBanner from '../../components/TestimonialsBanner';
+import ShippingCalculator from '../../components/ShippingCalculator';
 import { useAppContext } from '../../context/AppContext';
 
 interface ProductClientProps {
@@ -227,6 +228,21 @@ export default function ProductClient({ product }: ProductClientProps) {
                   </div>
                 )}
               </div>
+              
+              {/* Calculadora de Frete */}
+              <ShippingCalculator 
+                products={[
+                  {
+                    id: product.slug,
+                    width: 11, // cm
+                    height: 4, // cm
+                    length: 16, // cm
+                    weight: 0.3, // kg
+                    price: product.price,
+                    quantity: quantity
+                  }
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -365,11 +381,10 @@ export default function ProductClient({ product }: ProductClientProps) {
       />
 
       {/* Produtos Relacionados */}
-      <RelatedProducts 
-        currentProductSlug={product.slug}
-        category={product.category}
-        products={[]}
-      />
+              <RelatedProducts 
+          currentProductId={product.slug}
+          suggestedProducts={[]}
+        />
 
       <Footer />
     </main>

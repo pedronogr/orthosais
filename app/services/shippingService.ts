@@ -133,4 +133,158 @@ export const deleteFreteRule = async (id: string): Promise<boolean> => {
     };
     tx.onerror = (e) => rej((e.target as IDBRequest).error);
   });
-}; 
+};
+
+// shippingService.ts - Serviço para integração com o Melhor Envio
+
+interface ShippingQuote {
+  id: string;
+  name: string;
+  price: number;
+  custom_price?: number;
+  discount?: number;
+  currency: string;
+  delivery_time: number;
+  company: {
+    name: string;
+    picture: string;
+  };
+}
+
+interface ShippingCalculationRequest {
+  from: {
+    postal_code: string;
+  };
+  to: {
+    postal_code: string;
+  };
+  products: {
+    id: string;
+    width: number;
+    height: number;
+    length: number;
+    weight: number;
+    insurance_value: number;
+    quantity: number;
+  }[];
+}
+
+// Credenciais do Melhor Envio (guarde em variáveis de ambiente em produção)
+const MELHOR_ENVIO_CLIENT_ID = '6425';
+const MELHOR_ENVIO_CLIENT_SECRET = '9p4sjO3I3t1jyMxIHjn7oFMfexJBpVF2fFtdh6fY';
+const MELHOR_ENVIO_API_URL = 'https://sandbox.melhorenvio.com.br'; // Use https://melhorenvio.com.br para produção
+
+// Importar função de autenticação do Melhor Envio
+import { getAccessToken as getMelhorEnvioToken } from './melhorEnvioAuth';
+
+// Função para obter token de acesso
+async function getAccessToken(): Promise<string> {
+  try {
+    // Utiliza o serviço de autenticação do Melhor Envio
+    return await getMelhorEnvioToken();
+  } catch (error) {
+    console.error('Erro ao obter token do Melhor Envio:', error);
+    // Retorna um token de demonstração (isso não funciona em ambiente real)
+    return 'DEMO_TOKEN_PARA_DESENVOLVIMENTO';
+  }
+}
+
+// Função para calcular opções de frete
+export async function calculateShipping(
+  postalCodeOrigin: string,
+  postalCodeDestination: string,
+  products: any[]
+): Promise<ShippingQuote[]> {
+  try {
+    const token = await getAccessToken();
+
+    // Preparando dados para a API
+    const data: ShippingCalculationRequest = {
+      from: {
+        postal_code: postalCodeOrigin
+      },
+      to: {
+        postal_code: postalCodeDestination
+      },
+      products: products.map(product => ({
+        id: product.id,
+        width: product.width || 11,
+        height: product.height || 4,
+        length: product.length || 16,
+        weight: product.weight || 0.3,
+        insurance_value: product.price || 10.00,
+        quantity: product.quantity || 1
+      }))
+    };
+
+    // Fazendo a requisição para a API
+    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/calculate`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao calcular frete: ${response.status} ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Erro ao calcular opções de frete:', error);
+    throw error;
+  }
+}
+
+// Função para gerar etiqueta de frete
+export async function generateShippingLabel(shippingData: any): Promise<any> {
+  try {
+    const token = await getAccessToken();
+    
+    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/generate`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(shippingData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao gerar etiqueta: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao gerar etiqueta de frete:', error);
+    throw error;
+  }
+}
+
+// Função para rastrear encomenda
+export async function trackShipment(trackingCode: string): Promise<any> {
+  try {
+    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/tracking`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ code: trackingCode })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro ao rastrear encomenda: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao rastrear encomenda:', error);
+    throw error;
+  }
+} 
