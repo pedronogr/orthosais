@@ -7,9 +7,11 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Breadcrumbs from '../components/Breadcrumbs';
+import ShippingCalculator from '../components/ShippingCalculator';
 import { useAppContext } from '../context/AppContext';
 import { getAllCoupons, updateCoupon, type Coupon } from '../services/couponService';
 import { verifyCoupon, incrementCouponUse } from '../services/couponService';
+import { ShippingOption } from '../services/shippingService';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -37,6 +39,9 @@ export default function CheckoutPage() {
   const [couponApplied, setCouponApplied] = useState<Coupon | null>(null);
   const [discountValue, setDiscountValue] = useState(0);
   
+  // Estado para opção de frete
+  const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null);
+  
   // Verificar se o carrinho está vazio
   useEffect(() => {
     if (cart.length === 0) {
@@ -44,12 +49,24 @@ export default function CheckoutPage() {
     }
   }, [cart, router]);
   
-  // Verificar se o usuário está autenticado
+  // Verificar se o usuário está autenticado e carregar opção de frete selecionada
   useEffect(() => {
+    // Carregar dados do usuário
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user && user.name) {
       setName(user.name || '');
       setEmail(user.email || '');
+    }
+    
+    // Carregar opção de frete selecionada
+    const savedShipping = localStorage.getItem('selectedShipping');
+    if (savedShipping) {
+      try {
+        const parsedShipping = JSON.parse(savedShipping);
+        setSelectedShipping(parsedShipping);
+      } catch (error) {
+        console.error('Erro ao carregar dados do frete:', error);
+      }
     }
   }, []);
   
@@ -110,6 +127,12 @@ export default function CheckoutPage() {
       return;
     }
     
+    // Validar se uma opção de frete foi selecionada
+    if (!selectedShipping) {
+      setError('Por favor, selecione uma opção de frete.');
+      return;
+    }
+    
     // Salvar dados do endereço no localStorage para usar na página de pagamento
     const shippingAddress = {
       name,
@@ -131,11 +154,11 @@ export default function CheckoutPage() {
     router.push('/pagamento');
   };
   
-  // Calcular o frete (simulado)
-  const shippingCost = 15.90;
+  // Calcular o frete (valor selecionado ou padrão)
+  const shippingCost = selectedShipping ? selectedShipping.price : 15.90;
   const totalWithShipping = cartTotal + shippingCost - discountValue;
   
-  // aplicar cupom
+  // Aplicar cupom
   const handleApplyCoupon = async () => {
     if (!couponCode) return;
     
@@ -172,6 +195,12 @@ export default function CheckoutPage() {
       console.error("Erro ao aplicar cupom:", err);
       alert('Não foi possível verificar o cupom. Tente novamente.');
     }
+  };
+  
+  // Callback quando uma opção de frete é selecionada
+  const handleSelectShipping = (option: ShippingOption) => {
+    setSelectedShipping(option);
+    localStorage.setItem('selectedShipping', JSON.stringify(option));
   };
   
   return (
@@ -379,6 +408,50 @@ export default function CheckoutPage() {
                   </div>
                 </div>
                 
+                {/* Opções de Frete */}
+                <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4">Opções de Entrega</h2>
+                  
+                  {selectedShipping ? (
+                    <div className="mb-4">
+                      <div 
+                        className="p-3 border border-primary rounded-md bg-amber-50"
+                      >
+                        <div className="flex justify-between">
+                          <div>
+                            <p className="font-medium">{selectedShipping.carrier} - {selectedShipping.service}</p>
+                            <p className="text-sm text-gray-600">
+                              Entrega em até {selectedShipping.days} {selectedShipping.days === 1 ? 'dia útil' : 'dias úteis'}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-primary">
+                              R$ {selectedShipping.price.toFixed(2).replace('.', ',')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => setSelectedShipping(null)}
+                        className="text-primary hover:text-primary-hover text-sm mt-2"
+                      >
+                        Alterar opção de entrega
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-gray-600 mb-4">
+                        Calcule e selecione uma opção de entrega:
+                      </p>
+                      <ShippingCalculator 
+                        productWeight={cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0)}
+                        onSelectShipping={handleSelectShipping}
+                      />
+                    </div>
+                  )}
+                </div>
+                
                 {/* Cupom */}
                 <div className="bg-white p-6 rounded-lg shadow-md mb-6">
                   <h2 className="text-xl font-bold text-gray-800 mb-4">Cupom de Desconto</h2>
@@ -467,7 +540,13 @@ export default function CheckoutPage() {
                   
                   <div className="flex justify-between">
                     <span className="text-gray-600">Frete</span>
-                    <span className="text-gray-800 font-medium">R$ {shippingCost.toFixed(2).replace('.', ',')}</span>
+                    <span className="text-gray-800 font-medium">
+                      {selectedShipping ? (
+                        `R$ ${shippingCost.toFixed(2).replace('.', ',')}`
+                      ) : (
+                        'Selecione uma opção'
+                      )}
+                    </span>
                   </div>
                   
                   {discountValue > 0 && (
@@ -496,7 +575,11 @@ export default function CheckoutPage() {
                     <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Entrega em até 10 dias úteis
+                    {selectedShipping ? (
+                      `Entrega em até ${selectedShipping.days} ${selectedShipping.days === 1 ? 'dia útil' : 'dias úteis'}`
+                    ) : (
+                      'Selecione uma opção de entrega'
+                    )}
                   </div>
                 </div>
               </div>

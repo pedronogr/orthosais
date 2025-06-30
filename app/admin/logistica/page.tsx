@@ -1,164 +1,95 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import {
-  getAllShipments,
-  addShipment,
-  updateShipment,
-  deleteShipment,
-  getAllFreteRules,
-  addFreteRule,
-  deleteFreteRule,
-  type Shipment,
-  type FreteRule
-} from '../../services/shippingService';
+import React from 'react';
+import Link from 'next/link';
 
 export default function LogisticaPage() {
-  const [shipments, setShipments] = useState<Shipment[]>([]);
-  const [rules, setRules] = useState<FreteRule[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        let ships = await getAllShipments();
-        let frules = await getAllFreteRules();
-
-        // Se não houver dados, criar mock
-        if (ships.length === 0) {
-          const mockShip: Shipment = {
-            id: 'P12345',
-            carrier: 'Correios',
-            trackingCode: 'BR1234567890',
-            status: 'in_transit',
-            slaDays: 5,
-            createdAt: Date.now() - 86400000,
-            updatedAt: Date.now()
-          };
-          await addShipment(mockShip);
-          ships = [mockShip];
-        }
-
-        if (frules.length === 0) {
-          const mockRule: FreteRule = {
-            id: (crypto.randomUUID && crypto.randomUUID()) || 'rule1',
-            region: 'SP',
-            minWeight: 0,
-            maxWeight: 30,
-            price: 19.9,
-            carrier: 'Correios'
-          };
-          await addFreteRule(mockRule);
-          frules = [mockRule];
-        }
-
-        setShipments(ships);
-        setRules(frules);
-      } catch (e) {
-        console.error('Erro ao carregar logística:', e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  const handleAddRule = async () => {
-    const region = prompt('Região (ex: SP)');
-    if (!region) return;
-    const price = Number(prompt('Preço') || '0');
-    const rule: FreteRule = {
-      id: (crypto.randomUUID && crypto.randomUUID()) || Math.random().toString(36).substring(2, 9),
-      region,
-      minWeight: 0,
-      maxWeight: 999,
-      price,
-      carrier: 'Correios'
-    };
-    await addFreteRule(rule);
-    setRules((prev) => [...prev, rule]);
-  };
-
-  const handleDeleteRule = async (id: string) => {
-    await deleteFreteRule(id);
-    setRules((prev) => prev.filter((r) => r.id !== id));
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Logística & Frete</h1>
-      {loading ? (
-        <div>Carregando...</div>
-      ) : (
-        <>
-          {/* Shipment Table */}
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-8 overflow-x-auto">
-            <h2 className="text-lg font-semibold mb-4">Rastreamento de Envios</h2>
-            <table className="min-w-full text-sm text-left">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3">Pedido</th>
-                  <th className="px-4 py-3">Transportadora</th>
-                  <th className="px-4 py-3">Código</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shipments.map((s) => (
-                  <tr key={s.id} className="border-b last:border-0">
-                    <td className="px-4 py-2">{s.id}</td>
-                    <td className="px-4 py-2">{s.carrier}</td>
-                    <td className="px-4 py-2">{s.trackingCode}</td>
-                    <td className="px-4 py-2 capitalize">{s.status.replace('_', ' ')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Frete Rules */}
-          <div className="bg-white p-6 rounded-lg shadow-sm overflow-x-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Tabelas de Frete</h2>
-              <button onClick={handleAddRule} className="bg-primary text-white px-3 py-1 rounded-md">
-                Nova Regra
-              </button>
+      <h1 className="text-2xl font-bold mb-6">Gestão de Logística</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/admin/configuracoes/fretes" className="block">
+          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="bg-amber-100 p-3 rounded-full">
+                <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m-4 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold ml-4">Configurações de Frete</h2>
             </div>
-            <table className="min-w-full text-sm text-left">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3">Região</th>
-                  <th className="px-4 py-3">Peso (kg) Min</th>
-                  <th className="px-4 py-3">Peso Max</th>
-                  <th className="px-4 py-3">Preço</th>
-                  <th className="px-4 py-3">Transportadora</th>
-                  <th className="px-4 py-3 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rules.map((r) => (
-                  <tr key={r.id} className="border-b last:border-0">
-                    <td className="px-4 py-2">{r.region}</td>
-                    <td className="px-4 py-2">{r.minWeight}</td>
-                    <td className="px-4 py-2">{r.maxWeight}</td>
-                    <td className="px-4 py-2">R$ {r.price.toFixed(2)}</td>
-                    <td className="px-4 py-2">{r.carrier}</td>
-                    <td className="px-4 py-2 text-right">
-                      <button
-                        onClick={() => handleDeleteRule(r.id)}
-                        className="text-red-600 hover:underline text-xs"
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <p className="text-gray-600">
+              Configure regras de frete por região, peso e transportadora para cálculo automático.
+            </p>
           </div>
-        </>
-      )}
+        </Link>
+        
+        <Link href="/admin/logistica/rastreamento" className="block">
+          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-100 p-3 rounded-full">
+                <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold ml-4">Rastreamento de Pedidos</h2>
+            </div>
+            <p className="text-gray-600">
+              Acompanhe o status de entrega dos pedidos e gerencie rastreamentos.
+            </p>
+          </div>
+        </Link>
+        
+        <Link href="/admin/logistica/transportadoras" className="block">
+          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="bg-green-100 p-3 rounded-full">
+                <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold ml-4">Transportadoras</h2>
+            </div>
+            <p className="text-gray-600">
+              Gerencie transportadoras parceiras e seus serviços.
+            </p>
+          </div>
+        </Link>
+        
+        <Link href="/admin/logistica/etiquetas" className="block">
+          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="bg-purple-100 p-3 rounded-full">
+                <svg className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold ml-4">Etiquetas de Envio</h2>
+            </div>
+            <p className="text-gray-600">
+              Gere e imprima etiquetas de envio para pedidos.
+            </p>
+          </div>
+        </Link>
+        
+        <Link href="/admin/logistica/relatorios" className="block">
+          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex items-center mb-4">
+              <div className="bg-red-100 p-3 rounded-full">
+                <svg className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold ml-4">Relatórios</h2>
+            </div>
+            <p className="text-gray-600">
+              Visualize relatórios de desempenho logístico e custos.
+            </p>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 } 

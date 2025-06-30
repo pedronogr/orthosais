@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,57 +9,37 @@ import Footer from '../components/Footer';
 import Breadcrumbs from '../components/Breadcrumbs';
 import ShippingCalculator from '../components/ShippingCalculator';
 import { useAppContext } from '../context/AppContext';
+import { ShippingOption } from '../services/shippingService';
 
 export default function CartPage() {
   const router = useRouter();
   const { 
     cart, 
     removeFromCart, 
-    updateCartItemQuantity, 
+    updateQuantity, 
     clearCart, 
     cartTotal 
   } = useAppContext();
-  const [subtotal, setSubtotal] = useState(0);
-  const [selectedShipping, setSelectedShipping] = useState<any>(null);
 
-  // Calcular o subtotal quando o carrinho mudar
-  useEffect(() => {
-    const total = cart.reduce(
-      (acc, item) => acc + item.price * item.quantity,
-      0
-    );
-    setSubtotal(total);
-  }, [cart]);
+  // Estado para o frete selecionado
+  const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null);
+  
+  // Calcular o frete (valor padrão ou selecionado)
+  const shippingCost = selectedShipping ? selectedShipping.price : (cart.length > 0 ? 15.90 : 0);
+  const totalWithShipping = cartTotal + shippingCost;
 
-  const handleQuantityChange = (itemId: string, newQuantity: number) => {
-    if (newQuantity >= 1) {
-      updateCartItemQuantity(itemId, newQuantity);
-    }
-  };
-
-  const handleRemoveItem = (itemId: string) => {
-    removeFromCart(itemId);
-  };
-
-  const handleShippingSelection = (option: any) => {
-    setSelectedShipping(option);
-  };
-
+  // Continuar para o checkout
   const handleCheckout = () => {
-    if (cart.length === 0) {
-      alert('Adicione produtos ao carrinho antes de finalizar a compra.');
-      return;
+    // Salvar a opção de frete selecionada no localStorage
+    if (selectedShipping) {
+      localStorage.setItem('selectedShipping', JSON.stringify(selectedShipping));
     }
-    
-    if (!selectedShipping) {
-      alert('Por favor, selecione uma opção de frete antes de finalizar a compra.');
-      return;
-    }
-    
-    // Aqui você pode armazenar as informações do carrinho para a página de checkout
-    // Por exemplo, em localStorage ou context
-    
     router.push('/checkout');
+  };
+
+  // Callback quando uma opção de frete é selecionada
+  const handleSelectShipping = (option: ShippingOption) => {
+    setSelectedShipping(option);
   };
 
   return (
@@ -156,7 +136,7 @@ export default function CartPage() {
                           {/* Controles de Quantidade */}
                           <div className="flex items-center border rounded-md">
                             <button 
-                              onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary"
                               aria-label="Diminuir quantidade"
                             >
@@ -168,7 +148,7 @@ export default function CartPage() {
                               {item.quantity}
                             </span>
                             <button 
-                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-primary"
                               aria-label="Aumentar quantidade"
                             >
@@ -180,7 +160,7 @@ export default function CartPage() {
                           
                           {/* Remover Item */}
                           <button 
-                            onClick={() => handleRemoveItem(item.id)}
+                            onClick={() => removeFromCart(item.id)}
                             className="text-red-500 hover:text-red-700 transition-colors flex items-center"
                           >
                             <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -194,20 +174,17 @@ export default function CartPage() {
                   ))}
                 </div>
                 
-                {/* Calculadora de Frete */}
-                <div className="mt-8">
-                  <ShippingCalculator
-                    products={cart.map(item => ({
-                      id: item.id,
-                      width: 11, // cm - valores default
-                      height: 4, // cm
-                      length: 16, // cm
-                      weight: 0.3, // kg
-                      price: item.price,
-                      quantity: item.quantity
-                    }))}
-                    onSelectShipping={handleShippingSelection}
-                  />
+                {/* Botão Continuar Comprando */}
+                <div className="p-6 border-t">
+                  <Link 
+                    href="/produtos" 
+                    className="text-primary hover:text-primary-hover transition-colors flex items-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Continuar Comprando
+                  </Link>
                 </div>
               </div>
             </div>
@@ -220,42 +197,42 @@ export default function CartPage() {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="text-gray-800 font-medium">R$ {subtotal.toFixed(2).replace('.', ',')}</span>
+                    <span className="text-gray-800 font-medium">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
                   </div>
                   
                   <div className="flex justify-between">
                     <span className="text-gray-600">Frete</span>
                     <span className="text-gray-800 font-medium">
-                      {selectedShipping 
-                        ? `R$ ${selectedShipping.price.toFixed(2).replace('.', ',')}`
-                        : 'Calcular acima'}
+                      {selectedShipping ? (
+                        `R$ ${shippingCost.toFixed(2).replace('.', ',')}`
+                      ) : (
+                        'Calcule abaixo'
+                      )}
                     </span>
                   </div>
-                  
-                  {selectedShipping && (
-                    <div className="flex justify-between text-sm text-gray-500 pb-2">
-                      <span>Entrega em</span>
-                      <span>{selectedShipping.company.name} - {selectedShipping.delivery_time} dias úteis</span>
-                    </div>
-                  )}
                   
                   <div className="border-t pt-4 mt-4">
                     <div className="flex justify-between">
                       <span className="text-gray-800 font-bold">Total</span>
                       <span className="text-primary text-xl font-bold">
-                        R$ {(subtotal + (selectedShipping ? selectedShipping.price : 0)).toFixed(2).replace('.', ',')}
+                        R$ {totalWithShipping.toFixed(2).replace('.', ',')}
                       </span>
                     </div>
                   </div>
                 </div>
                 
+                {/* Calculadora de Frete */}
+                <div className="mt-6 pt-6 border-t">
+                  <ShippingCalculator 
+                    productWeight={cart.reduce((total, item) => total + (item.weight || 0.5) * item.quantity, 0)}
+                    onSelectShipping={handleSelectShipping}
+                    className="mb-6"
+                  />
+                </div>
+                
                 <button 
                   onClick={handleCheckout}
-                  disabled={cart.length === 0 || !selectedShipping}
-                  className={`w-full mt-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary-hover transition-colors flex items-center justify-center
-                    ${cart.length > 0 && selectedShipping 
-                      ? 'bg-amber-600 hover:bg-amber-700'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                  className="w-full mt-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-primary-hover transition-colors flex items-center justify-center"
                 >
                   Finalizar Pedido
                   <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

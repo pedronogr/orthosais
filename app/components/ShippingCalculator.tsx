@@ -1,135 +1,150 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
-import { calculateShipping } from '../services/shippingService';
+import { calculateShippingByCep } from '../services/shippingService';
 
-interface ShippingCalculatorProps {
-  products: any[];
-  onSelectShipping?: (option: any) => void;
+interface ShippingOption {
+  id: string;
+  carrier: string;
+  service: string;
+  price: number;
+  days: number;
 }
 
-const ShippingCalculator: React.FC<ShippingCalculatorProps> = ({ products, onSelectShipping }) => {
-  const [postalCode, setPostalCode] = useState<string>('');
-  const [shippingOptions, setShippingOptions] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  // CEP de origem da loja (fixo)
-  const originPostalCode = '04548-000'; // Substituir pelo CEP correto da origem
+interface ShippingCalculatorProps {
+  productWeight?: number;
+  onSelectShipping?: (option: ShippingOption) => void;
+  className?: string;
+}
 
-  // Função para validar CEP
-  const isValidCEP = (cep: string): boolean => {
-    const cepRegex = /^[0-9]{5}-?[0-9]{3}$/;
-    return cepRegex.test(cep);
+export default function ShippingCalculator({ 
+  productWeight = 0.5,
+  onSelectShipping,
+  className = ""
+}: ShippingCalculatorProps) {
+  const [cep, setCep] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+
+  // Formatar o CEP
+  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setCep(value);
   };
 
-  // Função para calcular o frete
+  // Calcular o frete
   const handleCalculateShipping = async () => {
-    if (!isValidCEP(postalCode)) {
-      setError('Por favor, informe um CEP válido');
+    if (cep.length !== 8) {
+      setError('CEP inválido. Digite os 8 números do CEP.');
       return;
     }
 
-    setLoading(true);
-    setError(null);
-
     try {
-      // Formata o CEP removendo o hífen
-      const formattedCEP = postalCode.replace('-', '');
+      setIsLoading(true);
+      setError('');
       
-      // Chama o serviço de cálculo de frete
-      const options = await calculateShipping(
-        originPostalCode.replace('-', ''),
-        formattedCEP,
-        products
-      );
+      // Verificar se o CEP é válido usando a API ViaCEP
+      const cepResponse = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const cepData = await cepResponse.json();
       
+      if (cepData.erro) {
+        setError('CEP não encontrado');
+        setShippingOptions([]);
+        setIsLoading(false);
+        return;
+      }
+
+      // Calcular opções de frete
+      const options = await calculateShippingByCep(cep, productWeight);
       setShippingOptions(options);
+      
+      // Se houver opções e callback, selecionar a primeira opção
+      if (options.length > 0) {
+        setSelectedOption(options[0].id);
+        if (onSelectShipping) {
+          onSelectShipping(options[0]);
+        }
+      }
     } catch (err) {
-      console.error('Erro ao calcular frete:', err);
+      console.error("Erro ao calcular frete:", err);
       setError('Não foi possível calcular o frete. Tente novamente.');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  // Função para selecionar opção de frete
-  const selectShippingOption = (option: any) => {
+  // Selecionar uma opção de frete
+  const handleSelectOption = (option: ShippingOption) => {
+    setSelectedOption(option.id);
     if (onSelectShipping) {
       onSelectShipping(option);
     }
   };
 
-  // Função para formatar o CEP enquanto digita
-  const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/\D/g, '');
-    
-    if (value.length > 5) {
-      value = value.slice(0, 5) + '-' + value.slice(5, 8);
-    }
-    
-    setPostalCode(value);
-  };
-
   return (
-    <div className="mt-6 border rounded-md p-4 bg-white shadow-sm">
-      <h3 className="text-lg font-medium text-gray-900 mb-4">Calcular Frete</h3>
-      
-      <div className="flex flex-col md:flex-row gap-2">
-        <div className="flex-1">
+    <div className={`shipping-calculator ${className}`}>
+      <div className="mb-4">
+        <label htmlFor="cep" className="block text-sm font-medium text-gray-700 mb-1">
+          Calcular Frete e Prazo
+        </label>
+        <div className="flex">
           <input
             type="text"
-            placeholder="Digite seu CEP"
-            value={postalCode}
+            id="cep"
+            value={cep}
             onChange={handleCepChange}
-            maxLength={9}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+            maxLength={8}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="Digite seu CEP"
           />
+          <button
+            type="button"
+            onClick={handleCalculateShipping}
+            disabled={isLoading || cep.length !== 8}
+            className="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary-hover transition disabled:opacity-70"
+          >
+            {isLoading ? 'Calculando...' : 'Calcular'}
+          </button>
         </div>
-        <button
-          onClick={handleCalculateShipping}
-          disabled={loading}
-          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-md transition-colors disabled:bg-gray-400"
-        >
-          {loading ? 'Calculando...' : 'Calcular'}
-        </button>
+        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        <div className="mt-1 text-xs text-gray-500">
+          <a 
+            href="https://buscacepinter.correios.com.br/app/endereco/index.php" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Não sei meu CEP
+          </a>
+        </div>
       </div>
-      
-      {error && (
-        <div className="mt-3 text-red-600 text-sm">
-          {error}
-        </div>
-      )}
-      
+
       {shippingOptions.length > 0 && (
         <div className="mt-4">
-          <h4 className="text-md font-medium text-gray-800 mb-2">Opções de Entrega</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Opções de Entrega</h4>
           <div className="space-y-2">
             {shippingOptions.map((option) => (
               <div 
                 key={option.id}
-                onClick={() => selectShippingOption(option)}
-                className="border rounded-md p-3 cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-colors"
+                onClick={() => handleSelectOption(option)}
+                className={`p-3 border rounded-md cursor-pointer transition-colors ${
+                  selectedOption === option.id 
+                    ? 'border-primary bg-amber-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-3">
-                    {option.company.picture && (
-                      <img 
-                        src={option.company.picture} 
-                        alt={option.company.name} 
-                        className="h-8 w-auto"
-                      />
-                    )}
-                    <div>
-                      <p className="font-medium">{option.name}</p>
-                      <p className="text-sm text-gray-600">
-                        Entrega em {option.delivery_time} {option.delivery_time === 1 ? 'dia útil' : 'dias úteis'}
-                      </p>
-                    </div>
+                <div className="flex justify-between">
+                  <div>
+                    <p className="font-medium">{option.carrier} - {option.service}</p>
+                    <p className="text-sm text-gray-600">
+                      Entrega em até {option.days} {option.days === 1 ? 'dia útil' : 'dias úteis'}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-amber-700">
-                      R$ {(option.price).toFixed(2).replace('.', ',')}
+                    <p className="font-bold text-primary">
+                      R$ {option.price.toFixed(2).replace('.', ',')}
                     </p>
                   </div>
                 </div>
@@ -138,13 +153,6 @@ const ShippingCalculator: React.FC<ShippingCalculatorProps> = ({ products, onSel
           </div>
         </div>
       )}
-      
-      <div className="mt-3 text-xs text-gray-500">
-        <p>* Prazo de entrega inicia-se a partir da confirmação do pagamento e pode variar conforme a região.</p>
-        <p>* Consulte disponibilidade para sua região.</p>
-      </div>
     </div>
   );
-};
-
-export default ShippingCalculator; 
+} 

@@ -1,7 +1,5 @@
 // Serviço de Logística & Frete usando IndexedDB
 
-import { MELHOR_ENVIO } from '../config/constants';
-
 export interface Shipment {
   id: string; // order id or tracking id
   carrier: string;
@@ -21,74 +19,21 @@ export interface FreteRule {
   carrier: string;
 }
 
+export interface ShippingOption {
+  id: string;
+  carrier: string;
+  service: string;
+  price: number;
+  days: number;
+}
+
 const DB_NAME = 'orthosais_db';
 const SHIP_STORE = 'shipments';
 const FRETE_STORE = 'freteRules';
 const DB_VERSION = 5;
 
-// API do Melhor Envio
-const MELHOR_ENVIO_API_URL = MELHOR_ENVIO.SANDBOX 
-  ? MELHOR_ENVIO.BASE_URL 
-  : MELHOR_ENVIO.PRODUCTION_URL;
-
-interface ShippingQuote {
-  id: string;
-  name: string;
-  price: number;
-  custom_price?: number;
-  discount?: number;
-  currency: string;
-  delivery_time: number;
-  company: {
-    name: string;
-    picture: string;
-  };
-}
-
-interface ShippingCalculationRequest {
-  from: {
-    postal_code: string;
-  };
-  to: {
-    postal_code: string;
-  };
-  products: {
-    id: string;
-    width: number;
-    height: number;
-    length: number;
-    weight: number;
-    insurance_value: number;
-    quantity: number;
-  }[];
-}
-
-// Credenciais do Melhor Envio (guarde em variáveis de ambiente em produção)
-const MELHOR_ENVIO_CLIENT_ID = '6425';
-const MELHOR_ENVIO_CLIENT_SECRET = '9p4sjO3I3t1jyMxIHjn7oFMfexJBpVF2fFtdh6fY';
-
-// Importar função de autenticação do Melhor Envio
-import { getAccessToken as getMelhorEnvioToken } from './melhorEnvioAuth';
-
-// Função para obter token de acesso
-async function getAccessToken(): Promise<string> {
-  try {
-    // Utiliza o serviço de autenticação do Melhor Envio
-    return await getMelhorEnvioToken();
-  } catch (error) {
-    console.error('Erro ao obter token do Melhor Envio:', error);
-    // Retorna um token de demonstração (isso não funciona em ambiente real)
-    return 'DEMO_TOKEN_PARA_DESENVOLVIMENTO';
-  }
-}
-
 const initDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined' || !window.indexedDB) {
-      reject(new Error('IndexedDB não disponível neste ambiente'));
-      return;
-    }
-
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onerror = (e) => reject((e.target as IDBRequest).error);
     req.onupgradeneeded = (e) => {
@@ -111,10 +56,6 @@ const initDB = (): Promise<IDBDatabase> => {
 
 // CRUD Shipments
 export const addShipment = async (s: Shipment): Promise<string> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Função disponível apenas no cliente');
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([SHIP_STORE], 'readwrite');
@@ -128,10 +69,6 @@ export const addShipment = async (s: Shipment): Promise<string> => {
 };
 
 export const getAllShipments = async (): Promise<Shipment[]> => {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([SHIP_STORE], 'readonly');
@@ -143,10 +80,6 @@ export const getAllShipments = async (): Promise<Shipment[]> => {
 };
 
 export const updateShipment = async (s: Shipment): Promise<boolean> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Função disponível apenas no cliente');
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([SHIP_STORE], 'readwrite');
@@ -160,10 +93,6 @@ export const updateShipment = async (s: Shipment): Promise<boolean> => {
 };
 
 export const deleteShipment = async (id: string): Promise<boolean> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Função disponível apenas no cliente');
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([SHIP_STORE], 'readwrite');
@@ -178,10 +107,6 @@ export const deleteShipment = async (id: string): Promise<boolean> => {
 
 // CRUD Frete Rules
 export const addFreteRule = async (r: FreteRule): Promise<string> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Função disponível apenas no cliente');
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([FRETE_STORE], 'readwrite');
@@ -195,10 +120,6 @@ export const addFreteRule = async (r: FreteRule): Promise<string> => {
 };
 
 export const getAllFreteRules = async (): Promise<FreteRule[]> => {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([FRETE_STORE], 'readonly');
@@ -210,10 +131,6 @@ export const getAllFreteRules = async (): Promise<FreteRule[]> => {
 };
 
 export const deleteFreteRule = async (id: string): Promise<boolean> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Função disponível apenas no cliente');
-  }
-  
   const db = await initDB();
   return new Promise((res, rej) => {
     const tx = db.transaction([FRETE_STORE], 'readwrite');
@@ -226,102 +143,150 @@ export const deleteFreteRule = async (id: string): Promise<boolean> => {
   });
 };
 
-// Função para calcular opções de frete
-export async function calculateShipping(
-  postalCodeOrigin: string,
-  postalCodeDestination: string,
-  products: any[]
-): Promise<ShippingQuote[]> {
+// Calcular frete baseado no CEP e peso
+export const calculateShippingByCep = async (cep: string, weight: number): Promise<ShippingOption[]> => {
   try {
-    const token = await getAccessToken();
-
-    // Preparando dados para a API
-    const data: ShippingCalculationRequest = {
-      from: {
-        postal_code: postalCodeOrigin
-      },
-      to: {
-        postal_code: postalCodeDestination
-      },
-      products: products.map(product => ({
-        id: product.id,
-        width: product.width || 11,
-        height: product.height || 4,
-        length: product.length || 16,
-        weight: product.weight || 0.3,
-        insurance_value: product.price || 10.00,
-        quantity: product.quantity || 1
-      }))
-    };
-
-    // Fazendo a requisição para a API
-    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/calculate`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao calcular frete: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Erro ao calcular opções de frete:', error);
-    throw error;
-  }
-}
-
-// Função para gerar etiqueta de frete
-export async function generateShippingLabel(shippingData: any): Promise<any> {
-  try {
-    const token = await getAccessToken();
+    // Obter o estado do CEP usando a API ViaCEP
+    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await response.json();
     
-    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/generate`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(shippingData)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao gerar etiqueta: ${response.status} ${response.statusText}`);
+    if (data.erro) {
+      throw new Error('CEP não encontrado');
     }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao gerar etiqueta de frete:', error);
-    throw error;
-  }
-}
-
-// Função para rastrear encomenda
-export async function trackShipment(trackingCode: string): Promise<any> {
-  try {
-    const response = await fetch(`${MELHOR_ENVIO_API_URL}/api/v2/me/shipment/tracking`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ code: trackingCode })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Erro ao rastrear encomenda: ${response.status} ${response.statusText}`);
+    
+    const state = data.uf;
+    
+    // Buscar regras de frete do banco de dados
+    const freteRules = await getAllFreteRules();
+    
+    // Se não houver regras no banco, usar valores padrão
+    if (freteRules.length === 0) {
+      return getDefaultShippingOptions(state, weight);
     }
-
-    return await response.json();
+    
+    // Filtrar regras aplicáveis com base na região e peso
+    const applicableRules = freteRules.filter(rule => {
+      // Verificar se a regra se aplica ao estado ou região
+      const isRegionMatch = 
+        rule.region === state || 
+        (rule.region === 'Sudeste' && ['SP', 'RJ', 'MG', 'ES'].includes(state)) ||
+        (rule.region === 'Sul' && ['PR', 'SC', 'RS'].includes(state)) ||
+        (rule.region === 'Nordeste' && ['MA', 'PI', 'CE', 'RN', 'PB', 'PE', 'AL', 'SE', 'BA'].includes(state)) ||
+        (rule.region === 'Norte' && ['AM', 'RR', 'AP', 'PA', 'TO', 'RO', 'AC'].includes(state)) ||
+        (rule.region === 'Centro-Oeste' && ['MT', 'MS', 'GO', 'DF'].includes(state)) ||
+        rule.region === 'Brasil';
+      
+      // Verificar se o peso está dentro dos limites
+      const isWeightInRange = weight >= rule.minWeight && weight <= rule.maxWeight;
+      
+      return isRegionMatch && isWeightInRange;
+    });
+    
+    // Se não houver regras aplicáveis, usar valores padrão
+    if (applicableRules.length === 0) {
+      return getDefaultShippingOptions(state, weight);
+    }
+    
+    // Converter regras em opções de frete
+    const options = applicableRules.map(rule => {
+      // Calcular dias com base na distância (simulado)
+      let days = 3; // Padrão
+      
+      if (['SP', 'RJ', 'MG'].includes(state)) {
+        days = 2; // Sudeste mais rápido
+      } else if (['AM', 'RR', 'AP', 'AC'].includes(state)) {
+        days = 7; // Norte mais demorado
+      }
+      
+      // Adicionar variação por transportadora
+      if (rule.carrier === 'Expresso') {
+        days = Math.max(1, days - 1);
+      } else if (rule.carrier === 'Econômico') {
+        days = days + 2;
+      }
+      
+      return {
+        id: `${rule.carrier}-${rule.id}`,
+        carrier: rule.carrier,
+        service: rule.carrier === 'Expresso' ? 'Entrega Rápida' : 'Entrega Padrão',
+        price: rule.price,
+        days
+      };
+    });
+    
+    // Ordenar por preço
+    return options.sort((a, b) => a.price - b.price);
   } catch (error) {
-    console.error('Erro ao rastrear encomenda:', error);
-    throw error;
+    console.error('Erro ao calcular frete:', error);
+    // Retornar opções padrão em caso de erro
+    return [
+      {
+        id: 'padrao-1',
+        carrier: 'Transportadora Padrão',
+        service: 'Entrega Padrão',
+        price: 15.90,
+        days: 5
+      }
+    ];
   }
-} 
+};
+
+// Função auxiliar para gerar opções de frete padrão
+const getDefaultShippingOptions = (state: string, weight: number): ShippingOption[] => {
+  // Preço base
+  let basePrice = 15.90;
+  
+  // Ajustar com base no peso
+  if (weight > 1) {
+    basePrice += (weight - 1) * 5;
+  }
+  
+  // Ajustar com base na região
+  if (['SP', 'RJ', 'MG'].includes(state)) {
+    basePrice *= 0.9; // 10% mais barato para Sudeste
+  } else if (['AM', 'RR', 'AP', 'AC'].includes(state)) {
+    basePrice *= 1.5; // 50% mais caro para Norte distante
+  }
+  
+  // Calcular dias com base na região
+  let standardDays = 3;
+  let expressDays = 1;
+  
+  if (['SP', 'RJ', 'MG'].includes(state)) {
+    standardDays = 2;
+    expressDays = 1;
+  } else if (['PR', 'SC', 'RS', 'ES', 'GO', 'DF'].includes(state)) {
+    standardDays = 3;
+    expressDays = 2;
+  } else if (['AM', 'RR', 'AP', 'AC'].includes(state)) {
+    standardDays = 7;
+    expressDays = 4;
+  } else {
+    standardDays = 5;
+    expressDays = 3;
+  }
+  
+  return [
+    {
+      id: 'expresso-1',
+      carrier: 'Transportadora Expressa',
+      service: 'Entrega Expressa',
+      price: basePrice * 1.8, // 80% mais caro para entrega expressa
+      days: expressDays
+    },
+    {
+      id: 'padrao-1',
+      carrier: 'Transportadora Padrão',
+      service: 'Entrega Padrão',
+      price: basePrice,
+      days: standardDays
+    },
+    {
+      id: 'economico-1',
+      carrier: 'Transportadora Econômica',
+      service: 'Entrega Econômica',
+      price: basePrice * 0.8, // 20% mais barato para entrega econômica
+      days: standardDays + 3
+    }
+  ];
+}; 

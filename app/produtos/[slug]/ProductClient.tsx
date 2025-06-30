@@ -29,6 +29,7 @@ interface ProductClientProps {
     category: string;
     features: string[];
     specifications: Record<string, string>;
+    weight?: number; // Peso do produto em kg
     reviews: Array<{
       id: number;
       user: {
@@ -58,6 +59,7 @@ export default function ProductClient({ product }: ProductClientProps) {
   const [activeTab, setActiveTab] = useState('description');
   const router = useRouter();
   const { addToCart } = useAppContext();
+  const [showShippingCalculator, setShowShippingCalculator] = useState(false);
 
   const handleQuantityChange = (value: number) => {
     if (value >= 1) {
@@ -72,7 +74,8 @@ export default function ProductClient({ product }: ProductClientProps) {
         id: product.slug,
         name: product.name,
         price: product.price,
-        imageSrc: product.imageSrc
+        imageSrc: product.imageSrc,
+        weight: product.weight || 0.5 // Usar o peso do produto ou um valor padrão
       });
     }
     
@@ -154,6 +157,36 @@ export default function ProductClient({ product }: ProductClientProps) {
                 ))}
               </div>
 
+              {/* Shipping Calculator */}
+              <div className="mb-8">
+                {showShippingCalculator ? (
+                  <div className="border rounded-md p-4 bg-white">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-medium text-gray-800">Calcular Frete</h3>
+                      <button 
+                        onClick={() => setShowShippingCalculator(false)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    <ShippingCalculator productWeight={product.weight || 0.5} />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowShippingCalculator(true)}
+                    className="flex items-center text-primary hover:text-primary-hover mb-4"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m-4 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    Calcular Frete e Prazo
+                  </button>
+                )}
+              </div>
+
               {/* Quantity and Add to Cart */}
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center border rounded-md">
@@ -228,21 +261,6 @@ export default function ProductClient({ product }: ProductClientProps) {
                   </div>
                 )}
               </div>
-              
-              {/* Calculadora de Frete */}
-              <ShippingCalculator 
-                products={[
-                  {
-                    id: product.slug,
-                    width: 11, // cm
-                    height: 4, // cm
-                    length: 16, // cm
-                    weight: 0.3, // kg
-                    price: product.price,
-                    quantity: quantity
-                  }
-                ]}
-              />
             </div>
           </div>
         </div>
@@ -381,10 +399,10 @@ export default function ProductClient({ product }: ProductClientProps) {
       />
 
       {/* Produtos Relacionados */}
-              <RelatedProducts 
-          currentProductId={product.slug}
-          suggestedProducts={[]}
-        />
+      <RelatedProducts 
+        currentProductId={product.slug}
+        suggestedProducts={[]}
+      />
 
       <Footer />
     </main>
