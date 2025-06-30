@@ -8,11 +8,20 @@ interface GuaranteeFeature {
 
 interface GuaranteeBannerProps {
   title: string;
-  description: string;
-  features: GuaranteeFeature[];
+  description?: string;
+  features?: GuaranteeFeature[];
+  guarantees?: GuaranteeFeature[];
 }
 
-export default function GuaranteeBanner({ title, description, features }: GuaranteeBannerProps) {
+export default function GuaranteeBanner({ 
+  title, 
+  description, 
+  features,
+  guarantees
+}: GuaranteeBannerProps) {
+  // Use guarantees se fornecido, caso contrário use features
+  const itemsToRender = guarantees || features || [];
+  
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -20,25 +29,27 @@ export default function GuaranteeBanner({ title, description, features }: Guaran
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             {title}
           </h2>
-          <p className="text-lg text-gray-600">
-            {description}
-          </p>
+          {description && (
+            <p className="text-lg text-gray-600">
+              {description}
+            </p>
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
+          {itemsToRender.map((item, index) => (
             <div 
               key={index}
               className="bg-white p-6 rounded-lg shadow-md text-center transform transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="w-16 h-16 mx-auto mb-4 text-primary">
-                {feature.icon}
+                {item.icon}
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {feature.title}
+                {item.title}
               </h3>
               <p className="text-gray-600">
-                {feature.description}
+                {item.description}
               </p>
             </div>
           ))}
