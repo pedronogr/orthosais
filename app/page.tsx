@@ -32,19 +32,19 @@ export default function Home() {
       category: "Linha Vida"
     },
     {
+      id: "ortrical",
+      name: "ORTRICAL",
+      description: "Suplemento alimentar com cálcio citrato-malato, magnésio bisglicinato, vitamina D₃ e vitamina K₂.",
+      price: 189.90,
+      imageSrc: "/images/ortrical.png",
+      category: "Linha Saúde"
+    },
+    {
       id: "flandor",
       name: "FLANDOR 500mg",
       description: "Formulação patenteada de curcumina com propriedades antioxidantes e anti-inflamatórias.",
       price: 159.90,
       imageSrc: "/images/flandor.png",
-      category: "Linha Vida"
-    },
-    {
-      id: "viscolivess",
-      name: "VISCOLIVE SS",
-      description: "SUPLEMENTO ALIMENTAR DE COLÁGENO, BCAA, VITAMINAS E MINERAIS",
-      price: 189.90,
-      imageSrc: "/images/viscolivess.png",
       category: "Linha Vida"
     }
   ];

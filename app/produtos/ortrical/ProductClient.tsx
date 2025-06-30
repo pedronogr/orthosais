@@ -21,42 +21,43 @@ export default function ProductClient() {
       "Mantenha fora do alcance de crianças",
       "Não exceda a dose recomendada",
       "Este produto não é um medicamento",
-      "Consulte um médico antes de usar se estiver grávida ou amamentando"
+      "Em caso de hipercalcemia, hipermagnesemia ou hiperparatireoidismo, consulte um médico antes do uso",
+      "Uso concomitante de anticoagulantes cumarínicos requer monitoração de INR"
     ],
     contraindications: [
       "Hipersensibilidade a qualquer componente da fórmula",
-      "Pessoas com alergia a crustáceos (fonte de glucosamina)",
-      "Pacientes com distúrbios de coagulação sem supervisão médica"
+      "Menores de 19 anos sem indicação profissional",
+      "Portadores de insuficiência renal grave sem acompanhamento médico"
     ],
     sideEffects: [
       "Em raros casos, pode causar desconforto gastrointestinal",
-      "Pode causar sonolência em pessoas sensíveis",
-      "Em caso de reações alérgicas, suspenda o uso e consulte um médico"
+      "Sensação de plenitude, flatulência ou fezes amolecidas (< 3%)",
+      "Raros: prurido, urticária ou dor abdominal moderada"
     ],
-    storage: "Conservar em local seco e fresco (15–30 °C), protegido da luz e umidade. Manter fora do alcance de crianças.",
-    shelfLife: "24 meses a partir da data de fabricação."
+    storage: "Conservar em local seco e fresco (15–30 °C), ao abrigo de luz e umidade.",
+    shelfLife: "Vide data impressa no frasco."
   };
 
   const faqs = [
     {
-      question: "Como age a combinação de Glucosamina e Condroitina?",
-      answer: "A Glucosamina e a Condroitina são componentes naturais da cartilagem. A Glucosamina ajuda na formação e reparo da cartilagem, enquanto a Condroitina auxilia na retenção de água e elasticidade. Juntas, oferecem suporte à saúde articular e mobilidade."
+      question: "Por que o cálcio citrato-malato é melhor que outras formas?",
+      answer: "O cálcio citrato-malato possui alta biodisponibilidade e sua absorção é independente do pH gástrico, o que o torna mais eficaz que outras formas de cálcio, especialmente em pessoas com baixa acidez estomacal ou idosos."
     },
     {
-      question: "O que é MSM e qual seu benefício?",
-      answer: "MSM (Metilsulfonilmetano) é uma fonte natural de enxofre, elemento essencial para a formação de tecidos conectivos. Ele auxilia na redução do desconforto articular e trabalha em sinergia com a Glucosamina e Condroitina."
+      question: "Qual a função da vitamina K₂ nesta fórmula?",
+      answer: "A vitamina K₂ (MK-7) ativa proteínas importantes como a osteocalcina e a proteína Gla da matriz, que direcionam o cálcio para os ossos e previnem sua deposição nas artérias, complementando a ação da vitamina D₃."
     },
     {
-      question: "Para que serve o Ácido Hialurônico nesta fórmula?",
-      answer: "O Ácido Hialurônico é um componente do líquido sinovial das articulações, atuando como lubrificante e amortecedor. Sua presença na fórmula contribui para a viscosidade do líquido articular e conforto durante os movimentos."
+      question: "Posso tomar ORTRICAL junto com medicamentos anticoagulantes?",
+      answer: "A vitamina K₂ pode interferir com anticoagulantes cumarínicos como a varfarina. Se você utiliza estes medicamentos, consulte seu médico antes de usar o ORTRICAL, pois pode ser necessário monitorar o INR."
+    },
+    {
+      question: "O ORTRICAL pode ser utilizado na pós-menopausa?",
+      answer: "Sim. O ORTRICAL oferece suporte à mineralização óssea adequada durante a pós-menopausa, período em que há maior risco de perda óssea. Recomenda-se orientação profissional para adequação da dosagem."
     },
     {
       question: "Quanto tempo leva para sentir os resultados?",
-      answer: "Os resultados podem variar de pessoa para pessoa, mas geralmente são observados benefícios após 4-6 semanas de uso contínuo e regular."
-    },
-    {
-      question: "Posso tomar junto com outros medicamentos?",
-      answer: "Recomendamos consultar seu médico antes de usar o Cientific Synovial em conjunto com outros medicamentos, especialmente anticoagulantes, pois pode haver interações."
+      answer: "Por se tratar de um suplemento para saúde óssea, os resultados de manutenção da densidade mineral óssea são cumulativos e de longo prazo, sendo recomendado o uso contínuo conforme orientação profissional."
     }
   ];
 
@@ -64,26 +65,26 @@ export default function ProductClient() {
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": "Cientific Synovial",
-    "image": "https://www.orthosais.com.br/images/cientificsy.png",
-    "description": "Suplemento premium para saúde articular com Glucosamina, Condroitina, MSM e Ácido Hialurônico. Apoio à manutenção da cartilagem e mobilidade.",
+    "name": "ORTRICAL",
+    "image": "https://www.orthosais.com.br/images/ortrical.png",
+    "description": "Suplemento alimentar com cálcio citrato-malato, magnésio bisglicinato, vitamina D₃ e vitamina K₂ para manutenção da densidade mineral óssea.",
     "brand": {
       "@type": "Brand",
       "name": "Orthosais"
     },
     "offers": {
       "@type": "Offer",
-      "url": "https://www.orthosais.com.br/produtos/cientific-synovial",
+      "url": "https://www.orthosais.com.br/produtos/ortrical",
       "priceCurrency": "BRL",
-      "price": "2499.90",
+      "price": "189.90",
       "priceValidUntil": "2024-12-31",
       "availability": "https://schema.org/InStock",
       "itemCondition": "https://schema.org/NewCondition"
     },
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "124"
+      "ratingValue": "4.7",
+      "reviewCount": "92"
     }
   };
 
@@ -95,14 +96,14 @@ export default function ProductClient() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
 
-      {/* Custom Header for Cientific Synovial */}
+      {/* Custom Header for ORTRICAL */}
       <header className="bg-amber-600 text-white py-6 shadow-md">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
           <h1 className="text-3xl font-bold tracking-wide">
-            Cientific Synovial<sup className="align-super text-sm">®</sup>
+            ORTRICAL<sup className="align-super text-sm">®</sup>
           </h1>
           <span className="mt-2 md:mt-0 text-lg">
-            Suporte Articular Avançado
+            Saúde Óssea Avançada
           </span>
         </div>
       </header>
@@ -115,7 +116,7 @@ export default function ProductClient() {
             <span className="mx-2">/</span>
             <Link href="/produtos" className="hover:text-amber-600">Produtos</Link>
             <span className="mx-2">/</span>
-            <span className="text-amber-600">Cientific Synovial</span>
+            <span className="text-amber-600">ORTRICAL</span>
           </div>
         </div>
       </div>
@@ -126,8 +127,8 @@ export default function ProductClient() {
           <div className="md:w-1/2 flex justify-center">
             <div className="relative w-full max-w-md aspect-square">
               <Image
-                src="/images/cientificsy.png"
-                alt="Frasco de Cientific Synovial"
+                src="/images/ortrical.png"
+                alt="Frasco de ORTRICAL"
                 fill
                 className="object-contain"
                 priority
@@ -137,26 +138,25 @@ export default function ProductClient() {
 
           <div className="md:w-1/2">
             <h2 className="text-3xl font-bold mb-4 text-gray-800">
-              Suporte Articular Avançado
+              Saúde Óssea Completa
             </h2>
             
             <div className="mb-4">
               <span className="text-3xl font-bold text-amber-600">
-                R$ 2.499,90
+                R$ 189,90
               </span>
               <span className="text-gray-500 text-sm ml-2">
-                Frasco com 90 cápsulas
+                Frasco com 60 comprimidos revestidos
               </span>
             </div>
             
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
               <ul className="list-disc ml-5 space-y-3 text-gray-700">
-                <li>Glucosamina + Condroitina + MSM + Ácido Hialurônico</li>
-                <li>Apoio à manutenção da cartilagem e mobilidade</li>
-                <li>Cápsulas concentradas para conforto diário</li>
-                <li>Frasco econômico com 90 cápsulas</li>
-                <li>Fórmula completa para saúde articular</li>
-                <li><Link href="/produtos/ortrical" className="text-amber-600 hover:underline">Conheça também o ORTRICAL - para saúde óssea completa</Link></li>
+                <li>Cálcio Citrato-Malato + Magnésio Bisglicinato + Vitamina D₃ + Vitamina K₂</li>
+                <li>Manutenção da densidade mineral óssea</li>
+                <li>Suporte à mineralização óssea adequada</li>
+                <li>Equilíbrio eletrolítico e funcionamento normal de músculos e nervos</li>
+                <li>Fórmula completa para saúde óssea</li>
               </ul>
             </div>
             
@@ -164,10 +164,10 @@ export default function ProductClient() {
               <button
                 onClick={() => {
                   addToCart({
-                    id: "cientific-synovial",
-                    name: "Cientific Synovial",
-                    price: 2499.90,
-                    imageSrc: "/images/cientificsy.png"
+                    id: "ortrical",
+                    name: "ORTRICAL",
+                    price: 189.90,
+                    imageSrc: "/images/ortrical.png"
                   });
                 }}
                 className="inline-block text-center bg-amber-600 hover:bg-amber-700 text-white font-medium py-3 px-8 rounded-md transition-all duration-300"
@@ -196,8 +196,8 @@ export default function ProductClient() {
 
       {/* Benefícios do Produto */}
       <BenefitsBanner
-        title="Benefícios do Cientific Synovial"
-        description="Conheça as vantagens exclusivas do nosso suplemento para saúde articular"
+        title="Benefícios do ORTRICAL"
+        description="Conheça as vantagens exclusivas do nosso suplemento para saúde óssea"
         benefits={[
           {
             icon: (
@@ -206,7 +206,7 @@ export default function ProductClient() {
               </svg>
             ),
             title: "Fórmula Completa",
-            description: "Combinação ideal de Glucosamina, Condroitina, MSM e Ácido Hialurônico para suporte articular completo"
+            description: "Combinação ideal de nutrientes essenciais para saúde óssea: cálcio de alta absorção, magnésio, vitaminas D₃ e K₂"
           },
           {
             icon: (
@@ -214,8 +214,8 @@ export default function ProductClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             ),
-            title: "Ação Prolongada",
-            description: "Cápsulas de liberação controlada para manutenção dos níveis ativos por mais tempo"
+            title: "Alta Biodisponibilidade",
+            description: "Cálcio citrato-malato com absorção superior, independente do pH gástrico, ideal para todas as idades"
           },
           {
             icon: (
@@ -223,8 +223,8 @@ export default function ProductClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
             ),
-            title: "Qualidade Premium",
-            description: "Ingredientes de alta pureza e biodisponibilidade, garantindo máxima eficácia"
+            title: "Sinergia Perfeita",
+            description: "Vitamina K₂ (MK-7) direciona o cálcio para os ossos e não para as artérias, complementando a ação da vitamina D₃"
           },
           {
             icon: (
@@ -232,8 +232,8 @@ export default function ProductClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
               </svg>
             ),
-            title: "Tecnologia Avançada",
-            description: "Processo de fabricação que preserva a integridade e potência dos compostos ativos"
+            title: "Fórmula Equilibrada",
+            description: "Proporção ideal de cálcio, magnésio, boro e manganês para otimizar a mineralização óssea"
           }
         ]}
       />
@@ -242,35 +242,37 @@ export default function ProductClient() {
       <section id="informacoes" className="bg-gray-50 py-16">
         <div className="container mx-auto px-4 space-y-12">
           <div className="bg-white p-8 rounded-lg shadow-sm">
-            <h3 className="text-2xl font-bold mb-6">Sobre o Cientific Synovial</h3>
+            <h3 className="text-2xl font-bold mb-6">Sobre o ORTRICAL</h3>
             <div className="prose max-w-none text-gray-700">
-              <p>O Cientific Synovial é um suplemento alimentar premium desenvolvido especificamente para oferecer suporte completo à saúde das articulações e tecidos conectivos.</p>
+              <p>O ORTRICAL é um suplemento alimentar premium desenvolvido especificamente para oferecer suporte completo à saúde óssea e manutenção da densidade mineral óssea em adultos e idosos.</p>
               
-              <p className="mt-4">Nossa fórmula exclusiva combina quatro componentes essenciais para a manutenção da cartilagem e mobilidade articular: Sulfato de Glucosamina, Sulfato de Condroitina, Metilsulfonilmetano (MSM) e Ácido Hialurônico.</p>
+              <p className="mt-4">Nossa fórmula exclusiva combina componentes essenciais para a saúde óssea: Cálcio Citrato-Malato, Magnésio Bisglicinato, Vitamina D₃, Vitamina K₂ (MK-7), complementados por boro e manganês quelados.</p>
               
-              <p className="mt-4">Cada ingrediente foi selecionado com base em evidências científicas e combinados em proporções ideais para maximizar a sinergia entre eles, oferecendo um suporte articular completo e eficaz.</p>
+              <p className="mt-4">Cada ingrediente foi selecionado com base em evidências científicas e combinados em proporções ideais para maximizar a sinergia entre eles, oferecendo um suporte ósseo completo e eficaz.</p>
               
               <h4 className="text-xl font-semibold mt-6 mb-4">Indicações</h4>
               <ul className="list-disc ml-6 space-y-2">
-                <li>Suporte para conforto e mobilidade articular</li>
-                <li>Manutenção da saúde da cartilagem</li>
-                <li>Auxílio na lubrificação das articulações</li>
-                <li>Suporte para praticantes de atividades físicas</li>
-                <li>Apoio à qualidade de vida em idades avançadas</li>
+                <li>Manutenção da densidade mineral óssea e prevenção da perda óssea em adultos e idosos</li>
+                <li>Suporte à mineralização óssea adequada durante gestação, lactação e pós-menopausa (sob orientação profissional)</li>
+                <li>Equilíbrio eletrolítico e funcionamento normal de músculos e nervos</li>
+                <li>Suporte para praticantes de atividades físicas e desportistas</li>
+                <li>Apoio à saúde óssea em períodos de maior demanda de minerais</li>
               </ul>
               
               <h4 className="text-xl font-semibold mt-6 mb-4">Modo de Uso</h4>
-              <p>Ingerir 2 cápsulas ao dia, preferencialmente após refeições ou conforme orientação de profissional de saúde.</p>
+              <p>Ingerir 2 comprimidos ao dia (juntos ou fracionados), preferencialmente junto às refeições principais, ou conforme orientação de médico ou nutricionista.</p>
               
               <h4 className="text-xl font-semibold mt-6 mb-4">Composição</h4>
-              <p>Cada dose (2 cápsulas) contém:</p>
+              <p>Cada dose (2 comprimidos) contém:</p>
               <ul className="list-disc ml-6 space-y-1">
-                <li>1500 mg Sulfato de Glucosamina (vegetal)</li>
-                <li>1200 mg Sulfato de Condroitina</li>
-                <li>500 mg Metilsulfonilmetano (MSM)</li>
-                <li>40 mg Ácido Hialurônico</li>
+                <li>600 mg de cálcio elementar (a partir de cálcio citrato-malato)</li>
+                <li>300 mg de magnésio elementar (bisglicinato quelado)</li>
+                <li>50 µg (2.000 UI) de vitamina D₃ (colecalciferol)</li>
+                <li>90 µg de vitamina K₂ (menaquinona-7)</li>
+                <li>2 mg de boro (quelato)</li>
+                <li>1 mg de manganês (quelato)</li>
               </ul>
-              <p className="mt-2">Excipientes: celulose microcristalina, estearato de magnésio vegetal e dióxido de silício coloidal.</p>
+              <p className="mt-2">Excipientes: celulose microcristalina, dióxido de silício, estearato de magnésio vegetal. NÃO CONTÉM GLÚTEN.</p>
             </div>
           </div>
         </div>
@@ -314,7 +316,7 @@ export default function ProductClient() {
       {/* Certificações */}
       <CertificationsSection 
         title="Certificações e Garantias"
-        description="O Cientific Synovial é produzido seguindo os mais rigorosos padrões de qualidade"
+        description="O ORTRICAL é produzido seguindo os mais rigorosos padrões de qualidade"
       />
 
       {/* Segurança do Produto */}
@@ -325,23 +327,15 @@ export default function ProductClient() {
 
       {/* Produtos Relacionados */}
       <RelatedProducts 
-        currentProductId="cientific-synovial"
+        currentProductId="ortrical"
         title="Produtos Relacionados"
         suggestedProducts={[
           {
-            id: "ortrical",
-            name: "ORTRICAL",
-            description: "Suplemento para saúde óssea com cálcio citrato-malato, magnésio bisglicinato, vitamina D₃ e K₂.",
-            price: 189.90,
-            imageSrc: "/images/ortrical.png",
-            category: "Linha Saúde"
-          },
-          {
-            id: "flandor",
-            name: "FLANDOR",
-            description: "Suplemento anti-inflamatório e antioxidante de alta potência com 95% de curcuminoides ativos.",
-            price: 159.90,
-            imageSrc: "/images/flandor.png",
+            id: "cientific-synovial",
+            name: "Cientific Synovial",
+            description: "Suplemento premium para saúde articular com Glucosamina, Condroitina, MSM e Ácido Hialurônico.",
+            price: 199.90,
+            imageSrc: "/images/cientificsy.png",
             category: "Linha Saúde"
           },
           {
@@ -359,9 +353,17 @@ export default function ProductClient() {
             price: 89.90,
             imageSrc: "/images/viscolivess.png",
             category: "Linha Saúde"
+          },
+          {
+            id: "flandor",
+            name: "FLANDOR",
+            description: "Suplemento anti-inflamatório e antioxidante de alta potência com 95% de curcuminoides ativos.",
+            price: 159.90,
+            imageSrc: "/images/flandor.png",
+            category: "Linha Saúde"
           }
         ]}
       />
     </>
   );
-} 
+}
