@@ -80,6 +80,7 @@ export default function ProductCard({ id, name, description, price, oldPrice, im
             productId === 'flandor' ? '/produtos/flandor' : 
             productId === 'viscomove' ? '/produtos/viscomove' :
             productId === 'viscolivess' ? '/produtos/viscolivess' :
+            productId === 'allmag' ? '/produtos/allmag' :
             `/produtos/${productId}`
           }
           className="bg-white border border-primary text-primary px-4 py-2 rounded-md text-sm hover:bg-gray-50 hover:border-primary-hover hover:text-primary-hover transition-all duration-300 text-center"
