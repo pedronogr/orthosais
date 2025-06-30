@@ -269,15 +269,7 @@ export default function ProductClient() {
               
               <a
                 href="#informacoes"
-                className="inline-block text-center bg-white border border-amber-600 font-medium py-3 px-8 rounded-md transition-all duration-300"
-                style={{ 
-                  backgroundColor: 'white',
-                  color: 'var(--amber-600)',
-                  borderColor: 'var(--amber-600)',
-                  textDecoration: 'none'
-                }}
-                onMouseOver={(e) => {e.currentTarget.style.color = 'var(--amber-600)'}}
-                onMouseOut={(e) => {e.currentTarget.style.color = 'var(--amber-600)'}}
+                className="inline-block text-center bg-white border border-amber-600 text-amber-600 font-medium py-3 px-8 rounded-md hover:bg-amber-50 transition-all duration-300"
               >
                 Ver mais informações
               </a>

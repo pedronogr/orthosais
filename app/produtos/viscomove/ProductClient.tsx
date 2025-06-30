@@ -177,15 +177,7 @@ export default function ProductClient() {
               
               <Link
                 href="/produtos/viscomove"
-                className="inline-block text-center bg-white border border-amber-600 font-medium py-3 px-8 rounded-md transition-all duration-300"
-                style={{ 
-                  backgroundColor: 'white',
-                  color: 'var(--amber-600)',
-                  borderColor: 'var(--amber-600)',
-                  textDecoration: 'none'
-                }}
-                onMouseOver={(e) => {e.currentTarget.style.color = 'var(--amber-600)'}}
-                onMouseOut={(e) => {e.currentTarget.style.color = 'var(--amber-600)'}}
+                className="inline-block text-center bg-white border border-amber-600 text-amber-600 font-medium py-3 px-8 rounded-md hover:bg-amber-50 transition-all duration-300"
               >
                 Saiba mais
               </Link>
@@ -328,11 +320,10 @@ export default function ProductClient() {
 
       {/* Produtos Relacionados */}
       <RelatedProducts 
-        currentProductSlug="viscomove"
-        category="Linha Saúde"
-        products={[
+        currentProductId="viscomove"
+        suggestedProducts={[
           {
-            slug: "cientific-synovial",
+            id: "cientific-synovial",
             name: "Cientific Synovial",
             description: "Suplemento premium para saúde articular com Glucosamina, Condroitina, MSM e Ácido Hialurônico.",
             price: 2499.90,
@@ -340,7 +331,7 @@ export default function ProductClient() {
             category: "Linha Saúde"
           },
           {
-            slug: "flandor",
+            id: "flandor",
             name: "FLANDOR",
             description: "Suplemento anti-inflamatório e antioxidante de alta potência com 95% de curcuminoides ativos.",
             price: 159.90,
@@ -348,7 +339,7 @@ export default function ProductClient() {
             category: "Linha Saúde"
           },
           {
-            slug: "viscolivess",
+            id: "viscolivess",
             name: "VISCOLIVE SS",
             description: "Suplemento com colágeno hidrolisado, BCAAs e complexo vitamínico-mineral para saúde articular, muscular e óssea.",
             price: 189.90,
