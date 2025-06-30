@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,6 +9,20 @@ import Footer from '../components/Footer';
 export const dynamic = 'force-dynamic';
 // Isso desativa o prerender estático para esta rota
 export const dynamicParams = true;
+
+// Componente de fallback enquanto o conteúdo carrega
+const SuccessContentLoading = () => {
+  return (
+    <div className="py-16 container mx-auto px-4">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8">
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600"></div>
+        </div>
+        <p className="text-center text-gray-600">Carregando informações...</p>
+      </div>
+    </div>
+  );
+};
 
 // Componente separado para o conteúdo da página
 const SuccessContent = () => {
@@ -63,7 +77,9 @@ export default function MelhorEnvioSuccessPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <Header />
-      <SuccessContent />
+      <Suspense fallback={<SuccessContentLoading />}>
+        <SuccessContent />
+      </Suspense>
       <Footer />
     </main>
   );

@@ -1,13 +1,23 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { getAuthorizationUrl, hasValidToken, clearTokens } from '../../../services/melhorEnvioAuth';
 
 // Indicar ao Next.js para renderizar esta página apenas no cliente
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
-export default function MelhorEnvioConfigPage() {
+// Componente de loading
+const ConfigLoading = () => {
+  return (
+    <div className="flex items-center justify-center p-12">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600"></div>
+    </div>
+  );
+};
+
+// Componente principal de configuração
+const ConfigContent = () => {
   const [authUrl, setAuthUrl] = useState<string>('');
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -42,11 +52,7 @@ export default function MelhorEnvioConfigPage() {
   };
   
   if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600"></div>
-      </div>
-    );
+    return <ConfigLoading />;
   }
   
   return (
@@ -162,5 +168,14 @@ export default function MelhorEnvioConfigPage() {
         </div>
       </div>
     </div>
+  );
+};
+
+// Página principal
+export default function MelhorEnvioConfigPage() {
+  return (
+    <Suspense fallback={<ConfigLoading />}>
+      <ConfigContent />
+    </Suspense>
   );
 } 
