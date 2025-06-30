@@ -1,16 +1,35 @@
 import React from 'react';
 
 interface ProductSafetyProps {
-  safetyInfo: {
+  safetyInfo?: {
     warnings: string[];
     contraindications: string[];
     sideEffects: string[];
     storage: string;
     shelfLife: string;
   };
+  warnings?: string[];
+  contraindications?: string[];
+  sideEffects?: string[];
+  storage?: string;
+  shelfLife?: string;
 }
 
-export default function ProductSafety({ safetyInfo }: ProductSafetyProps) {
+export default function ProductSafety({ 
+  safetyInfo,
+  warnings: propWarnings,
+  contraindications: propContraindications,
+  sideEffects: propSideEffects,
+  storage: propStorage,
+  shelfLife: propShelfLife
+}: ProductSafetyProps) {
+  // Use as propriedades do objeto safetyInfo ou as propriedades individuais
+  const warnings = safetyInfo?.warnings || propWarnings || [];
+  const contraindications = safetyInfo?.contraindications || propContraindications || [];
+  const sideEffects = safetyInfo?.sideEffects || propSideEffects || [];
+  const storage = safetyInfo?.storage || propStorage || '';
+  const shelfLife = safetyInfo?.shelfLife || propShelfLife || '';
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
@@ -40,7 +59,7 @@ export default function ProductSafety({ safetyInfo }: ProductSafetyProps) {
                   Avisos Importantes
                 </h3>
                 <ul className="space-y-2">
-                  {safetyInfo.warnings.map((warning, index) => (
+                  {warnings.map((warning, index) => (
                     <li key={index} className="flex items-start text-gray-700">
                       <span className="text-primary mr-2">•</span>
                       {warning}
@@ -67,7 +86,7 @@ export default function ProductSafety({ safetyInfo }: ProductSafetyProps) {
                   Contraindicações
                 </h3>
                 <ul className="space-y-2">
-                  {safetyInfo.contraindications.map((contraindication, index) => (
+                  {contraindications.map((contraindication, index) => (
                     <li key={index} className="flex items-start text-gray-700">
                       <span className="text-primary mr-2">•</span>
                       {contraindication}
@@ -97,7 +116,7 @@ export default function ProductSafety({ safetyInfo }: ProductSafetyProps) {
                   Efeitos Colaterais
                 </h3>
                 <ul className="space-y-2">
-                  {safetyInfo.sideEffects.map((effect, index) => (
+                  {sideEffects.map((effect, index) => (
                     <li key={index} className="flex items-start text-gray-700">
                       <span className="text-primary mr-2">•</span>
                       {effect}
@@ -126,11 +145,11 @@ export default function ProductSafety({ safetyInfo }: ProductSafetyProps) {
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium text-gray-900 mb-2">Armazenamento</h4>
-                    <p className="text-gray-700">{safetyInfo.storage}</p>
+                    <p className="text-gray-700">{storage}</p>
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900 mb-2">Prazo de Validade</h4>
-                    <p className="text-gray-700">{safetyInfo.shelfLife}</p>
+                    <p className="text-gray-700">{shelfLife}</p>
                   </div>
                 </div>
               </div>
