@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { handleOAuthCallback } from '../../../services/melhorEnvioAuth';
 
+// Garantir que este handler seja executado apenas no servidor
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Extrair o código de autorização da URL

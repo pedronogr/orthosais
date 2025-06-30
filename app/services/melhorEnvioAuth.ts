@@ -1,17 +1,12 @@
 'use client';
 
 import axios from 'axios';
-
-// Credenciais do Melhor Envio
-// Em produção, estas devem estar em variáveis de ambiente
-const MELHOR_ENVIO_CLIENT_ID = '6425';
-const MELHOR_ENVIO_CLIENT_SECRET = '9p4sjO3I3t1jyMxIHjn7oFMfexJBpVF2fFtdh6fY';
-const MELHOR_ENVIO_SANDBOX = true; // Definir como false para produção
+import { MELHOR_ENVIO } from '../config/constants';
 
 // URLs do Melhor Envio
-const MELHOR_ENVIO_BASE_URL = MELHOR_ENVIO_SANDBOX 
-  ? 'https://sandbox.melhorenvio.com.br' 
-  : 'https://melhorenvio.com.br';
+const MELHOR_ENVIO_BASE_URL = MELHOR_ENVIO.SANDBOX 
+  ? MELHOR_ENVIO.BASE_URL 
+  : MELHOR_ENVIO.PRODUCTION_URL;
 
 const TOKEN_STORAGE_KEY = 'melhor_envio_token';
 
@@ -77,37 +72,23 @@ export async function getAccessToken(): Promise<string> {
     }
   }
   
-  // Se não tivermos um token válido ou ocorrer um erro, redirecionamos para autorização
-  return initiateOAuthFlow();
+  // Se não tivermos um token válido ou ocorrer um erro, retornamos um token de demonstração
+  // Em produção, você redirecionaria para o fluxo de autorização
+  return 'DEMO_TOKEN_PARA_DESENVOLVIMENTO';
 }
 
 /**
  * Inicia o fluxo de autorização OAuth2
+ * Retorna a URL para redirecionamento
  */
-function initiateOAuthFlow(): string {
-  // Em um cenário real, você redirecionaria o usuário para esta URL para autorizar
-  // e depois capturaria o código de autorização no callback
-  // Por enquanto, simplesmente retornaremos um token simulado para fins de demonstração
+export function initiateOAuthFlow(): string {
+  // URL de redirecionamento deve ser configurada no dashboard do Melhor Envio
+  const redirectUri = typeof window !== 'undefined'
+    ? `${window.location.origin}/api/melhor-envio/callback`
+    : MELHOR_ENVIO.DEFAULT_REDIRECT_URI;
   
-  if (typeof window !== 'undefined') {
-    // URL de redirecionamento deve ser configurada no dashboard do Melhor Envio
-    const redirectUri = encodeURIComponent(`${window.location.origin}/api/melhor-envio/callback`);
-    
-    // A URL completa de autorização seria:
-    const authUrl = `${MELHOR_ENVIO_BASE_URL}/oauth/authorize?client_id=${MELHOR_ENVIO_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&state=your_state_here&scope=shipping-calculate+shipping-tag+shipping-tracking+cart-read`;
-    
-    // Em um ambiente real, faríamos:
-    // window.location.href = authUrl;
-    
-    // Para fins de demonstração:
-    console.info('URL de autorização do Melhor Envio (redirecionamento manual necessário):', authUrl);
-    // Armazenar nos cookies que estamos esperando um callback do OAuth
-    document.cookie = `melhor_envio_oauth_pending=true; path=/; max-age=${60*60}`;
-    
-    return 'DEMO_TOKEN_POR_FAVOR_COMPLETE_O_FLUXO_OAUTH';
-  }
-  
-  return 'DEMO_TOKEN';
+  // A URL completa de autorização seria:
+  return `${MELHOR_ENVIO_BASE_URL}/oauth/authorize?client_id=${MELHOR_ENVIO.CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&state=your_state_here&scope=shipping-calculate+shipping-tag+shipping-tracking+cart-read`;
 }
 
 /**
@@ -118,12 +99,12 @@ export async function handleOAuthCallback(code: string): Promise<TokenData> {
     // URL de redirecionamento deve corresponder ao configurado no Melhor Envio
     const redirectUri = typeof window !== 'undefined'
       ? `${window.location.origin}/api/melhor-envio/callback`
-      : 'http://seu-site.com/api/melhor-envio/callback';
+      : MELHOR_ENVIO.DEFAULT_REDIRECT_URI;
     
     const response = await axios.post(`${MELHOR_ENVIO_BASE_URL}/oauth/token`, {
       grant_type: 'authorization_code',
-      client_id: MELHOR_ENVIO_CLIENT_ID,
-      client_secret: MELHOR_ENVIO_CLIENT_SECRET,
+      client_id: MELHOR_ENVIO.CLIENT_ID,
+      client_secret: MELHOR_ENVIO.CLIENT_SECRET,
       redirect_uri: redirectUri,
       code
     });
@@ -152,8 +133,8 @@ async function refreshAccessToken(refreshToken: string): Promise<string> {
   try {
     const response = await axios.post(`${MELHOR_ENVIO_BASE_URL}/oauth/token`, {
       grant_type: 'refresh_token',
-      client_id: MELHOR_ENVIO_CLIENT_ID,
-      client_secret: MELHOR_ENVIO_CLIENT_SECRET,
+      client_id: MELHOR_ENVIO.CLIENT_ID,
+      client_secret: MELHOR_ENVIO.CLIENT_SECRET,
       refresh_token: refreshToken
     });
     
@@ -187,10 +168,5 @@ export function clearTokens(): void {
  * Gera a URL para autorização do Melhor Envio
  */
 export function getAuthorizationUrl(): string {
-  // URL de redirecionamento deve ser configurada no dashboard do Melhor Envio
-  const redirectUri = typeof window !== 'undefined'
-    ? encodeURIComponent(`${window.location.origin}/api/melhor-envio/callback`)
-    : encodeURIComponent('http://seu-site.com/api/melhor-envio/callback');
-  
-  return `${MELHOR_ENVIO_BASE_URL}/oauth/authorize?client_id=${MELHOR_ENVIO_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&state=your_state_here&scope=shipping-calculate+shipping-tag+shipping-tracking+cart-read`;
+  return initiateOAuthFlow();
 } 

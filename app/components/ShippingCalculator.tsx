@@ -15,7 +15,7 @@ const ShippingCalculator: React.FC<ShippingCalculatorProps> = ({ products, onSel
   const [error, setError] = useState<string | null>(null);
   
   // CEP de origem da loja (fixo)
-  const originPostalCode = '04548-000'; // Substitua pelo CEP correto da origem
+  const originPostalCode = '04548-000'; // Substituir pelo CEP correto da origem
 
   // Função para validar CEP
   const isValidCEP = (cep: string): boolean => {

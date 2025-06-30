@@ -3,10 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { getAuthorizationUrl, hasValidToken, clearTokens } from '../../../services/melhorEnvioAuth';
 
+// Indicar ao Next.js para renderizar esta página apenas no cliente
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export default function MelhorEnvioConfigPage() {
   const [authUrl, setAuthUrl] = useState<string>('');
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [origin, setOrigin] = useState<string>('');
   
   useEffect(() => {
     // Verificar se já temos um token válido
@@ -14,6 +19,11 @@ export default function MelhorEnvioConfigPage() {
       const hasToken = hasValidToken();
       setIsAuthorized(hasToken);
       setAuthUrl(getAuthorizationUrl());
+      
+      if (typeof window !== 'undefined') {
+        setOrigin(window.location.origin);
+      }
+      
       setLoading(false);
     };
     
@@ -23,6 +33,12 @@ export default function MelhorEnvioConfigPage() {
   const handleRevokeAccess = () => {
     clearTokens();
     setIsAuthorized(false);
+  };
+  
+  const handleCopyUrl = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(`${origin}/api/melhor-envio/callback`);
+    }
   };
   
   if (loading) {
@@ -107,14 +123,10 @@ export default function MelhorEnvioConfigPage() {
             <h3 className="text-sm font-medium text-gray-700">URL de Redirecionamento</h3>
             <div className="mt-1 flex items-center">
               <code className="bg-gray-100 px-3 py-2 rounded text-sm flex-grow">
-                {typeof window !== 'undefined' ? `${window.location.origin}/api/melhor-envio/callback` : 'Loading...'}
+                {origin ? `${origin}/api/melhor-envio/callback` : 'Carregando...'}
               </code>
               <button
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    navigator.clipboard.writeText(`${window.location.origin}/api/melhor-envio/callback`);
-                  }
-                }}
+                onClick={handleCopyUrl}
                 className="ml-2 p-2 text-gray-500 hover:text-gray-700"
                 title="Copiar URL"
               >
