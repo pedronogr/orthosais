@@ -229,16 +229,16 @@ export default function Header() {
               </Link>
               <Link href="/sobre" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
                 Sobre Nós
-              </Link>
+                    </Link>
               <Link href="/produtos" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
                 Produtos
-              </Link>
+                    </Link>
               <Link href="/pesquisa" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
                 Pesquisa e Inovação
               </Link>
               <Link href="/contato" className="block px-3 py-2 text-base font-medium nav-link hover:bg-gray-50 rounded-md transition-colors">
                 Contato
-              </Link>
+                </Link>
             </div>
           </div>
         )}

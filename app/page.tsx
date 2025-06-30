@@ -40,7 +40,7 @@ export default function Home() {
       category: "Linha Vida"
     },
     {
-      id: "viscolive-ss",
+      id: "viscolivess",
       name: "VISCOLIVE SS",
       description: "SUPLEMENTO ALIMENTAR DE COLÁGENO, BCAA, VITAMINAS E MINERAIS",
       price: 189.90,
@@ -191,6 +191,7 @@ export default function Home() {
             {newProducts.map((product, index) => (
               <ProductCard 
                 key={index}
+                id={product.id}
                 name={product.name}
                 description={product.description}
                 price={product.price}
