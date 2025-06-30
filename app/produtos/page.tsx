@@ -33,7 +33,6 @@ function ProdutosContent() {
     {
       id: "viscomove",
       name: "VISCOMOVE",
-      description: "SUPLEMENTO ALIMENTAR EM COMPRIMIDOS Cartonagem contendo frasco plástico com 30 comprimidos 1,2 g cada.",
       price: 159.90,
       imageSrc: "/images/viscomove.png",
       category: "Linha Vida"
@@ -41,7 +40,6 @@ function ProdutosContent() {
     {
       id: "flandor",
       name: "FLANDOR 500mg",
-      description: "O que é o Flandor Curcumin C3 Complex®? Curcumin C3 Complex® é uma formulação patenteada de curcumina, o composto ativo encontrado na cúrcuma (Curcuma longa), conhecido por suas propriedades antioxidantes e anti-inflamatórias. Quais os benefícios do Flandor Curcumin C3 Complex®? Poder antioxidante: Protege as células contra danos causados pelos radicais livres. Ação Anti-inflamatória: Reduz a inflamação, aliviando dores articulares como na osteoartrite. Saúde do Coração: Ajuda a manter níveis saudáveis de colesterol, protegendo contra doenças cardiovasculares. Estímulo Cognitivo: Melhora a função cerebral, auxiliando na memória e na prevenção de doenças neurodegenerativas. Suporte à Imunidade: Contribui para fortalecer o sistema imunológico, protegendo o corpo contra agentes patogênicos. O CURCUMIN C3 COMPLEX® OFERECE UMA ABORDAGEM NATURAL E EFICAZ PARA PROMOVER A SAÚDE E O BEM-ESTAR GERAL.",
       price: 159.90,
       imageSrc: "/images/flandor.png",
       category: "Linha Vida"
@@ -49,7 +47,6 @@ function ProdutosContent() {
     {
       id: "cientific-synovial",
       name: "CIENTIFIC SYNOVIAL",
-      description: "É uma solução injetável de ácido hialurônico, utilizada para o tratamento de doenças articulares, como a osteoartrite, visando melhorar a mobilidade e reduzir a dor. É uma forma de viscossuplementação, onde a solução é injetada na articulação para substituir ou complementar o líquido sinovial natural. Como funciona: Restauração da Viscosidade: O Cientific Synovial é composto por ácido hialurônico reticulado, que tem maior viscosidade do que o ácido hialurônico natural, restaurando a viscosidade do líquido sinovial. Lubrificação: A solução lubrifica as articulações, reduzindo o atrito entre as superfícies articulares e melhorando a mobilidade. Redução da Dor: Ao reduzir o atrito e melhorar a lubrificação, o Cientific Synovial pode ajudar a aliviar a dor causada pela inflamação e desgaste das articulações. Proteção das Articulações: A solução ajuda a proteger as articulações de danos, pois atua como um amortecedor e lubrificante, reduzindo o impacto nas superfícies articulares. Indicações: Osteoartrite: O Cientific Synovial é frequentemente usado no tratamento da osteoartrite do joelho, ombro, quadril, tornozelo, mãos e pés. Outras Patologias: Pode ser utilizado em outras condições que afetam as articulações, como periartrite do ombro. Composição: Ácido Hialurônico Reticulado: É o principal componente, com alto peso molecular e viscosidade, garantindo maior durabilidade e eficácia. Tampão de Fosfato: Ajuda a manter o pH da solução em um nível adequado. Cloreto de Sódio e Água para Injetáveis: Complementam a solução, garantindo sua estabilidade e segurança. Importante: O Cientific Synovial é uma solução injetável que deve ser administrada por um profissional de saúde qualificado.",
       price: 2499.90,
       imageSrc: "/images/cientificsy.png",
       category: "Linha Vida"
@@ -57,7 +54,6 @@ function ProdutosContent() {
     {
       id: "viscolive-ss",
       name: "VISCOLIVE SS",
-      description: "Cartonagem contendo um sachê de 500 g + informativo. Recomendação de uso: Número máximo de porções diárias: 1 porção de 20 g (2 colheres medida) por dia. Composição: Colágeno, BCAA, Vitaminas e Minerais. Precauções e Advertências: Consumir este produto conforme a recomendação de ingestão diária constante na embalagem. NÃO CONTEM GLÚTEN. Este produto não deve ser ingerido por gestantes, lactantes e crianças, sem orientação do nutricionista.",
       price: 189.99,
       imageSrc: "/images/viscolivess.png",
       category: "Linha Vida"
@@ -65,7 +61,6 @@ function ProdutosContent() {
     {
       id: "ortrical",
       name: "ORTRICAL",
-      description: "SUPLEMENTO ALIMENTAR DE CÁLCIO & VITAMINA D3 EM COMPRIMIDOS Cartonagem com Pote Plástico contendo 60 Comprimidos de 1,4 g (Peso Líq. 84 g) + informativo. Recomendação de uso: Ingerir 2 cápsulas ao dia. N° Máximo de porções diárias: 2 cápsulas por dia. Composição: Cloreto de Magnésio e Óxido de Magnésio. Precauções e Advertências: Consumir este produto conforme a recomendação de ingestão diária constante na embalagem. NÃO CONTEM GLÚTEN. Este produto não deve ser ingerido por gestantes, lactantes e crianças, sem orientação do nutricionista.",
       price: 52.90,
       imageSrc: "/images/ortrical.png",
       category: "Linha Vida"
@@ -73,7 +68,6 @@ function ProdutosContent() {
     {
       id: "allmag",
       name: "ALLMAG",
-      description: "SUPLEMENTO ALIMENTAR DE MAGNÉSIO E VITAMINAS B6 EM CÁPSULAS Cartonagem com Pote Plástico contendo 60 cápsulas de 620 mg (Peso Líq. 37 g) + informativo. Recomendação de uso: Ingerir 1 a 2 cápsulas ao dia, ou a critério do médico ou nutricionista. N° Máximo de porções diárias: 2 cápsulas por dia. Composição: Óxido de Magnésio, Cloreto de Magnésio e Vitamina B6. Precauções e Advertências: Consumir este produto conforme a recomendação de ingestão diária constante na embalagem. NÃO CONTEM GLÚTEN. Este produto não deve ser ingerido por gestantes, lactantes e crianças, sem orientação do nutricionista.",
       price: 86.49,
       imageSrc: "/images/allmag.png",
       category: "Linha Vida"
