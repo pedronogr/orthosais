@@ -38,7 +38,7 @@ export default function ProductCard({ id, name, description, price, oldPrice, im
 
   return (
     <div 
-      className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md border-t-4 border-primary transition-all duration-300 animate-fade-in"
+      className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md border-t-4 border-amber-600 transition-all duration-300 animate-fade-in"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -62,7 +62,7 @@ export default function ProductCard({ id, name, description, price, oldPrice, im
         )}
       </div>
       
-      <h3 className="font-bold mb-2 text-primary text-lg transition-colors duration-300">{name}</h3>
+      <h3 className="font-bold mb-2 text-amber-600 text-lg transition-colors duration-300">{name}</h3>
       <p className="text-sm text-gray-600 mb-4 line-clamp-2">{description}</p>
       
       <div className="flex justify-between items-center mb-4">
@@ -70,7 +70,7 @@ export default function ProductCard({ id, name, description, price, oldPrice, im
           {oldPrice && (
             <p className="text-sm text-gray-500 line-through">R${oldPrice.toFixed(2).replace('.', ',')}</p>
           )}
-          <p className="font-bold text-lg text-secondary">R${price.toFixed(2).replace('.', ',')}</p>
+          <p className="font-bold text-lg text-amber-600">R${price.toFixed(2).replace('.', ',')}</p>
         </div>
       </div>
       
@@ -81,15 +81,17 @@ export default function ProductCard({ id, name, description, price, oldPrice, im
             productId === 'viscomove' ? '/produtos/viscomove' :
             productId === 'viscolivess' ? '/produtos/viscolivess' :
             productId === 'allmag' ? '/produtos/allmag' :
+            productId === 'cientific-synovial' ? '/produtos/cientific-synovial' :
+            productId === 'ortrical' ? '/produtos/ortrical' :
             `/produtos/${productId}`
           }
-          className="bg-white border border-primary text-primary px-4 py-2 rounded-md text-sm hover:bg-gray-50 hover:border-primary-hover hover:text-primary-hover transition-all duration-300 text-center"
+          className="bg-white border border-amber-600 text-amber-600 px-4 py-2 rounded-md text-sm hover:bg-amber-50 transition-all duration-300 text-center"
         >
           SAIBA MAIS
         </Link>
         <button 
           onClick={handleAddToCart}
-          className="bg-primary text-white px-4 py-2 rounded-md text-sm hover:bg-primary-hover transition-all duration-300 shadow-sm hover:shadow-md"
+          className="bg-amber-600 text-white px-4 py-2 rounded-md text-sm hover:bg-amber-700 transition-all duration-300 shadow-sm hover:shadow-md"
         >
           COMPRAR
         </button>
